@@ -111,10 +111,15 @@ class TestUntitled:
 
         assert len(weights) == len(league_options), "Weights length must match the league options length"
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
+        selected_position = url_to_position.get(selected_url, None)
 
         if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 All Leagues", "🌍 Outside Top 7"]:
-            age_options = ["Age", "U21", "U22", "U23", "U24"]
-            selected_age = random.choice(age_options)
+            if selected_position != "Goalkeepers":
+                age_options = ["Age", "U21", "U22", "U23", "U24"]
+                selected_age = random.choice(age_options)
+            else:
+                age_options = ["Age", "U24"]
+                selected_age = random.choice(age_options)        
         else:
             selected_age = "Age"
 
