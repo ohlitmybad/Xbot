@@ -1,8 +1,9 @@
-name: Run test_twi.py
+name: Run test_twi.py on Pull Request
 
 on:
-  workflow_dispatch:
-
+  pull_request:
+    branches:
+      - main
 
 jobs:
   run-script:
@@ -15,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Specify the Python version you need
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
