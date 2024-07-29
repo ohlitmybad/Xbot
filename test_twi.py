@@ -183,15 +183,6 @@ class TestUntitled:
         # Create the tweet text dynamically
         tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
-        tweet_text = tweet_text.replace(" Wanderers", "")
-        tweet_text = tweet_text.replace("Borussia ", "")
-        tweet_text = tweet_text.replace("Deportivo ", "")
-        tweet_text = tweet_text.replace("Manchester", "Man")
-        tweet_text = tweet_text.replace(" Hotspur", "")
-        tweet_text = tweet_text.replace("West Ham United", "West Ham")
-        tweet_text = tweet_text.replace("Celta de", "Celta")
-        tweet_text = tweet_text.replace("Olympique Lyonnais", "Lyon")
-        tweet_text = tweet_text.replace("Olympique Marseille", "Marseille")
 
 
 
