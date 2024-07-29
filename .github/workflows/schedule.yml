@@ -1,8 +1,8 @@
-name: Run test_twi.py daily at 4:20 AM
+name: Run test_twi.py daily at 4:25 AM
 
 on:
   schedule:
-    - cron: '20 4 * * *'
+    - cron: '25 4 * * *'
 
 jobs:
   run-script:
