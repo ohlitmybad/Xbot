@@ -188,7 +188,7 @@ class TestUntitled:
         
         selected_position = url_to_position[selected_url]
         selected_age = selected_age.replace("Age", "")
-
+        selected_metric = selected_metric.replace(" per 90", "")
 
         
 
