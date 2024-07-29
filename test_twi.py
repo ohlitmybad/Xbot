@@ -72,7 +72,11 @@ class TestUntitled:
             "https://datamb.football/proplotst24/": "Strikers"
         }
 
-        selected_url = random.choice(list(urls_and_metrics.keys()))
+        urls = list(urls_and_metrics.keys())
+        weights2 = [0.13, 0.18, 0.16, 0.19, 0.18, 0.16]  # Adjust weights as needed
+
+        # Select a URL based on weights
+        selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
         time.sleep(1)
         self.driver.set_window_size(1080, 840)
