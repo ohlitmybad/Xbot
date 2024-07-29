@@ -102,7 +102,7 @@ class TestUntitled:
         selected_metric_y = random.choice(metric_options)
 
         league_options = [
-            "🇪🇺 Top 5 Leagues","🇪🇺 Top 7 Leagues","🌍 All Leagues", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League","🇪🇸 La Liga", "🇩🇪 Bundesliga", "🇮🇹 Serie A", "🇫🇷 Ligue 1","🌍 Outside Top 7", "🇵🇹 Liga Portugal", "🇳🇱 Eredivisie","🇧🇪 Belgium", "🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", "🇦🇹 Austria", "🇨🇭 Switzerland", "🇹🇷 Türkiye", "🇩🇰 Denmark", "🇸🇪 Sweden", "🇳🇴 Norway", "🇭🇷 Croatia", "🇷🇸 Serbia", "🇨🇿 Czech Republic", "🇵🇱 Poland", "🇺🇦 Ukraine", "🇷🇺 Russia", "🇬🇷 Greece", "🇯🇵 Japan", "🇰🇷 Korea", "🇸🇦 Saudi Arabia", "🇺🇸 United States",  "🇲🇽 Mexico", "🇧🇷 Brazil", "🇦🇷 Argentina", "🇺🇾 Uruguay", "🇨🇱 Chile", "🇨🇴 Colombia", "🇪🇨 Ecuador",  "🇵🇾 Paraguay", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Championship", "🇪🇸 Spain Segunda", "🇮🇹 Serie B", "🇩🇪 2. Bundesliga", "🇫🇷 Ligue 2"
+            "?? Top 5 Leagues","?? Top 7 Leagues","? All Leagues", "??????? Premier League","?? La Liga", "?? Bundesliga", "?? Serie A", "?? Ligue 1","? Outside Top 7", "?? Liga Portugal", "?? Eredivisie","?? Belgium", "??????? Scotland", "?? Austria", "?? Switzerland", "?? T?rkiye", "?? Denmark", "?? Sweden", "?? Norway", "?? Croatia", "?? Serbia", "?? Czech Republic", "?? Poland", "?? Ukraine", "?? Russia", "?? Greece", "?? Japan", "?? Korea", "?? Saudi Arabia", "?? United States",  "?? Mexico", "?? Brazil", "?? Argentina", "?? Uruguay", "?? Chile", "?? Colombia", "?? Ecuador",  "?? Paraguay", "??????? Championship", "?? Spain Segunda", "?? Serie B", "?? 2. Bundesliga", "?? Ligue 2"
         ]
 
         weights = [
@@ -112,7 +112,7 @@ class TestUntitled:
         assert len(weights) == len(league_options), "Weights length must match the league options length"
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
 
-        if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 All Leagues", "🌍 Outside Top 7"]:
+        if selected_league in ["?? Top 7 Leagues", "?? Top 5 Leagues", "? All Leagues", "? Outside Top 7"]:
             age_options = ["Age", "U21", "U22", "U23", "U24"]
             selected_age = random.choice(age_options)
         else:
@@ -175,7 +175,7 @@ class TestUntitled:
 
 
         # Create the tweet text dynamically
-        tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
+        tweet_text = f"{selected_league} : {selected_age} {selected_position}\n? {selected_metric_x} vs {selected_metric_y}\n\n? datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
 
         # Create the tweet with the media attached
@@ -198,3 +198,4 @@ class TestUntitled:
 
 if __name__ == "__main__":
     pytest.main()
+ 
