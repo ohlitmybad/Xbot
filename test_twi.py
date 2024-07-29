@@ -183,6 +183,12 @@ class TestUntitled:
         # Create the tweet text dynamically
         tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
+        tweet_text = tweet_text.replace("Short / medium", "Short")
+        tweet_text = tweet_text.replace("short / medium", "short")
+        tweet_text = tweet_text.replace("Successful a", "A")
+        tweet_text = tweet_text.replace("Successful d", "D")
+
+
 
 
 
