@@ -11,11 +11,10 @@ from selenium.webdriver.chrome.options import Options
 import os
 
 # Your credentials
-API_KEY = '32feyQhe254Q2hkdyrDfjGSng'
-API_KEY_SECRET = 'uJyFMrO740xiyVL7s5xt85RASKxf5yz5RqcjLk1pvDQwlnu3EI'
-ACCESS_TOKEN = '1673464650082533377-yvDfgdHnO6w1qJ8rssj8bZZM4xu7mO'
-ACCESS_TOKEN_SECRET = 'UIaw24cV1Zitu1fs7fGDfSa4aAVbhDjO59Aoqy2a7ARVt'
-
+API_KEY = 'LE6SyLxFUylCZTsbBvIX2W27Q'
+API_KEY_SECRET = 'XsYjkJ9z0tkzHeZy7L5klBLvJTQm0UfnL0y8v98fXTmATOO7mm'
+ACCESS_TOKEN = '1560529113932304385-xjjVWIc627nH4zCi891LQIa6Rqj1R8'
+ACCESS_TOKEN_SECRET = 'uOhZo4WNxskMyqy3DF2h7xOjNkqQ74StjuNyK2nL76UJu'
 
 class TestUntitled:
     def setup_method(self, method):
@@ -173,6 +172,20 @@ class TestUntitled:
             return
         
         media_id = response.json()['media_id_string']
+
+        # Add alt text to the uploaded image
+        alt_text = "This is an automated tweet. Position, league, age and metrics were chosen randomly in the 2023/24 dataset.\nPositions are determined with the player's average heat map.\n\nJoin the DataMB Pro free trial to access more leagues and tools!"  # Add your alt text here
+        metadata_url = "https://upload.twitter.com/1.1/media/metadata/create.json"
+        metadata_payload = {
+    "media_id": media_id,
+    "alt_text": {"text": alt_text}
+}
+        metadata_response = requests.post(metadata_url, json=metadata_payload, auth=auth)
+
+        if metadata_response.status_code != 200:
+            print("Failed to create metadata:", metadata_response.status_code, metadata_response.text)
+            return
+        
         selected_position = url_to_position[selected_url]
         selected_age = selected_age.replace("Age", "")
 
