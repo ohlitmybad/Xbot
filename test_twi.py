@@ -30,8 +30,7 @@ class TestUntitled:
 
     def test_untitled(self):
         urls_and_metrics = {
-            "https://datamb.football/proplotgk24/": [
-                "Shots against per 90", "xG against per 90", 
+            "https://datamb.football/proplotgk24/": [ 
                 "Prevented goals per 90", "Save rate %", "Accurate passes %", 
                 "Accurate progressive passes %", "Accurate short / medium passes %", 
                 "Accurate long passes %", "Accurate passes to final third %", 
@@ -61,7 +60,7 @@ class TestUntitled:
                 "Shots on target %","Goal conversion %","Accurate crosses %","Successful dribbles %","Offensive duels won %","Defensive duels won %","Aerial duels won %","Successful defensive actions per 90","Successful attacking actions per 90","xG per 90","Goals per 90", "Assists per 90", "Shots per 90","Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90"
             ],
             "https://datamb.football/proplotst24/": [
-                "Successful defensive actions per 90","Aerial duels per 90","Successful attacking actions per 90","xG per 90","Shots per 90","Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive runs per 90","Goals per 90", "Assists per 90", "Accelerations per 90","Fouls suffered per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to penalty area per 90","Deep completions per 90","Aerial duels won %","Shots on target %","Goal conversion %","Successful dribbles %","Offensive duels won %","Accurate passes %"
+                "Successful defensive actions per 90","Aerial duels per 90","Successful attacking actions per 90","xG per 90","Shots per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Key passes per 90","Aerial duels won %","Shots on target %","Goal conversion %","Successful dribbles %","Offensive duels won %","Accurate passes %"
             ]
         }
 
@@ -133,15 +132,17 @@ class TestUntitled:
             EC.element_to_be_clickable((By.XPATH, f"//select[@id='select-y']/option[. = '{selected_metric_y}']"))
         ).click()
 
+        dropdown = self.driver.find_element(By.ID, "select-league")
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_league}']"))
+        ).click()
+
         dropdown = self.driver.find_element(By.ID, "select-age")
         WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_age}']"))
         ).click()
 
-        dropdown = self.driver.find_element(By.ID, "select-league")
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_league}']"))
-        ).click()
+
 
         WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.ID, "toggle-median-lines"))
