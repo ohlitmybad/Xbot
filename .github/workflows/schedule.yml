@@ -1,6 +1,9 @@
-name: Run test_twi.py on Pull Request
+name: Run test_twi.py on Push or Pull Request
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
