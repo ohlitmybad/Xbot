@@ -188,7 +188,6 @@ class TestUntitled:
         
         selected_position = url_to_position[selected_url]
         selected_age = selected_age.replace("Age", "")
-        selected_metric = selected_metric.replace(" per 90", "")
 
         
 
@@ -227,6 +226,8 @@ class TestUntitled:
         tweet_text = tweet_text.replace("🇨🇴 Colombia", "🇨🇴 Primera A")
         tweet_text = tweet_text.replace("🇪🇨 Ecuador", "🇪🇨 Serie A")
         tweet_text = tweet_text.replace("🇵🇾 Paraguay", "🇵🇾 Primera División")
+        tweet_text = tweet_text.replace(" per 90", "")
+
 
 
 
