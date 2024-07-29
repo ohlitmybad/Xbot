@@ -11,10 +11,10 @@ from selenium.webdriver.chrome.options import Options
 import os
 
 # Your credentials
-API_KEY = 'LE6SyLxFUylCZTsbBvIX2W27Q'
-API_KEY_SECRET = 'XsYjkJ9z0tkzHeZy7L5klBLvJTQm0UfnL0y8v98fXTmATOO7mm'
-ACCESS_TOKEN = '1560529113932304385-xjjVWIc627nH4zCi891LQIa6Rqj1R8'
-ACCESS_TOKEN_SECRET = 'uOhZo4WNxskMyqy3DF2h7xOjNkqQ74StjuNyK2nL76UJu'
+API_KEY = '9VG6eYAmiPw8mvRVUuN23BSee'
+API_KEY_SECRET = 'O2r4p5hyCZ7ZYjsVK73RAnReH7GnZQKahswukRbOOSfUoLevGp'
+ACCESS_TOKEN = '1389871650125094913-tHVJvdSksSHn89CCTQhgxfNpF1QENW'
+ACCESS_TOKEN_SECRET = 'LWrKGzeokBFq7IxbA18gFsyE4bAGgeJYc6gTNDTIUJoV2'
 
 class TestUntitled:
     def setup_method(self, method):
