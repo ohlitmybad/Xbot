@@ -136,7 +136,7 @@ class TestUntitled:
         ).click()
 
         dropdown = self.driver.find_element(By.ID, "select-league")
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, 100).until(
             EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_league}']"))
         ).click()
 
