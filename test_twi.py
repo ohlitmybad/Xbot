@@ -35,7 +35,7 @@ class TestUntitled:
                 "Accurate long passes %", "Accurate passes to final third %", 
                 "Progressive passes per 90", "Passes to final third per 90", "Passes per 90", 
                 "Forward passes per 90", "Long passes per 90", "Short / medium passes per 90", 
-                "Successful defensive actions per 90", "Defensive duels per 90", 
+                "Successful defensive actions per 90", 
                 "Aerial duels per 90"
             ],
             "https://datamb.football/proplotcb24/": [
@@ -108,7 +108,7 @@ class TestUntitled:
         ]
 
         weights = [
-            0.26, 0.19, 0.09, 0.09, 0.06, 0.05, 0.05, 0.04, 0.03, 0.03, 0.03, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025
+            0.25, 0.18, 0.11, 0.09, 0.06, 0.05, 0.05, 0.04, 0.03, 0.03, 0.03, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025
         ]
 
         assert len(weights) == len(league_options), "Weights length must match the league options length"
