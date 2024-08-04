@@ -31,35 +31,31 @@ class TestUntitled:
         urls_and_metrics = {
             "https://datamb.football/proplotgk24/": [ 
                 "Prevented goals per 90", "Save rate %", "Accurate passes %", 
-                "Accurate progressive passes %", "Accurate short / medium passes %", 
-                "Accurate long passes %", "Accurate passes to final third %", 
-                "Progressive passes per 90", "Passes to final third per 90", "Passes per 90", 
-                "Forward passes per 90", "Long passes per 90", "Short / medium passes per 90", 
-                "Successful defensive actions per 90", 
-                "Aerial duels per 90"
+                "Accurate short / medium passes %", 
+                "Accurate long passes %", 
+                 "Passes per 90", "Long passes per 90", "Short / medium passes per 90", "Successful defensive actions per 90"
             ],
             "https://datamb.football/proplotcb24/": [
                 "Successful defensive actions per 90", "Defensive duels per 90", 
-        "Aerial duels per 90", "Sliding tackles per 90", "PAdj Sliding tackles", 
-        "Interceptions per 90", "PAdj Interceptions", "Dribbles per 90", 
+        "Aerial duels per 90", "Sliding tackles per 90", 
+        "Interceptions per 90", "Dribbles per 90", 
         "Progressive runs per 90", "Passes per 90", "Forward passes per 90", 
         "Long passes per 90", "Key passes per 90", "Passes to final third per 90", 
-        "Passes to penalty area per 90", "Through passes per 90", 
         "Progressive passes per 90", "Defensive duels won %", 
         "Aerial duels won %", "Accurate passes %", "Accurate forward passes %", 
         "Accurate progressive passes %"
             ],
             "https://datamb.football/proplotfb24/": [
-                "Successful defensive actions per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","PAdj Sliding tackles","Interceptions per 90","PAdj Interceptions","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Shots per 90","Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Accurate crosses %","Successful dribbles %","Offensive duels won %","Accurate passes %","Accurate forward passes %","Accurate progressive passes %"
+                "Successful defensive actions per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","Interceptions per 90","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Successful dribbles %","Offensive duels won %","Accurate passes %","Accurate forward passes %","Accurate progressive passes %"
             ],
             "https://datamb.football/proplotcm24/": [
-                "Successful defensive actions per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","PAdj Sliding tackles","Interceptions per 90","PAdj Interceptions","Successful attacking actions per 90","xG per 90","Shots per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Accurate passes %","Accurate forward passes %","Accurate progressive passes %","Successful dribbles %","Offensive duels won %"
+                "Successful defensive actions per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","PAdj Sliding tackles","Interceptions per 90","PAdj Interceptions","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Accurate passes %","Accurate forward passes %","Accurate progressive passes %","Successful dribbles %","Offensive duels won %"
             ],
             "https://datamb.football/proplotfw24/": [
-                "Shots on target %","Goal conversion %","Accurate crosses %","Successful dribbles %","Offensive duels won %","Successful defensive actions per 90","Successful attacking actions per 90","xG per 90","Goals per 90", "Assists per 90", "Shots per 90","Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90"
+                "Shots on target %","Goal conversion %","Accurate crosses %","Successful dribbles %","Offensive duels won %","Successful defensive actions per 90","Successful attacking actions per 90","xG per 90","Goals per 90", "Assists per 90", "Shots per 90","Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Deep completions per 90","Progressive passes per 90"
             ],
             "https://datamb.football/proplotst24/": [
-                "Successful defensive actions per 90","Aerial duels per 90","Successful attacking actions per 90","xG per 90","Shots per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Key passes per 90","Aerial duels won %","Shots on target %","Goal conversion %","Successful dribbles %","Offensive duels won %","Accurate passes %"
+                "Aerial duels per 90","xG per 90","Shots per 90","Dribbles per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Key passes per 90","Aerial duels won %","Shots on target %","Goal conversion %","Successful dribbles %","Offensive duels won %","Accurate passes %"
             ]
         }
 
@@ -73,7 +69,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.13, 0.19, 0.14, 0.20, 0.18, 0.16]  # Adjust weights as needed
+        weights2 = [0.12, 0.20, 0.13, 0.21, 0.19, 0.15]  # Adjust weights as needed
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
@@ -108,7 +104,7 @@ class TestUntitled:
         ]
 
         weights = [
-            0.25, 0.18, 0.11, 0.09, 0.06, 0.05, 0.05, 0.04, 0.03, 0.03, 0.03, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025
+            0.24, 0.17, 0.13, 0.09, 0.06, 0.05, 0.05, 0.04, 0.03, 0.03, 0.03, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025
         ]
 
         assert len(weights) == len(league_options), "Weights length must match the league options length"
