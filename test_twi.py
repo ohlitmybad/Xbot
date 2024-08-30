@@ -25,7 +25,7 @@ class TestUntitled:
 
     def teardown_method(self):
         self.driver.quit()
-        
+    
 
     def test_untitled(self):
         urls_and_metrics = {
@@ -75,7 +75,7 @@ class TestUntitled:
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
         time.sleep(1)
-        self.driver.set_window_size(1080, 840)
+        self.driver.set_window_size(1080, 900)
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.NAME, "eml"))
         ).send_keys("tombolivier@gmail.com")
