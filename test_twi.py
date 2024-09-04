@@ -11,10 +11,10 @@ from selenium.webdriver.chrome.options import Options
 import os
 
 # Your credentials
-API_KEY = '9VG6eYAmiPw8mvRVUuN23BSee'
-API_KEY_SECRET = 'O2r4p5hyCZ7ZYjsVK73RAnReH7GnZQKahswukRbOOSfUoLevGp'
-ACCESS_TOKEN = '1389871650125094913-tHVJvdSksSHn89CCTQhgxfNpF1QENW'
-ACCESS_TOKEN_SECRET = 'LWrKGzeokBFq7IxbA18gFsyE4bAGgeJYc6gTNDTIUJoV2'
+API_KEY = 'BM8U8uJj76OZgMJFo6ZnxqnJU'
+API_KEY_SECRET = 'Qhm2ZpdCdErb25iEo8yKLfvmsvq9rbG9aSoGX27gEmmlz6YAPg'
+ACCESS_TOKEN = '1560529113932304385-P7Ta1fX43Uzbpfv4iNYM5v1RpGmP7d'
+ACCESS_TOKEN_SECRET = 'hBPpMPjfDefViFIUlhSc71fQIu6piCHEfUOjaMLx7d0Yd'
 
 class TestUntitled:
     def setup_method(self, method):
@@ -69,13 +69,13 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.12, 0.205, 0.12, 0.215, 0.19, 0.15]  # Adjust weights as needed
+        weights2 = [0.05, 0.14, 0.08, 0.30, 0.30, 0.13]  # Adjust weights as needed
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
         time.sleep(1)
-        self.driver.set_window_size(1080, 900)
+        self.driver.set_window_size(1080, 930)
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.NAME, "eml"))
         ).send_keys("tombolivier@gmail.com")
@@ -100,11 +100,11 @@ class TestUntitled:
         selected_metric_y = random.choice(metric_options)
 
         league_options = [
-            "🇪🇺 Top 5 Leagues","🇪🇺 Top 7 Leagues","🌍 All Leagues", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League","🇪🇸 La Liga", "🇩🇪 Bundesliga", "🇮🇹 Serie A", "🇫🇷 Ligue 1","🌍 Outside Top 7", "🇵🇹 Liga Portugal", "🇳🇱 Eredivisie","🇧🇪 Belgium", "🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", "🇦🇹 Austria", "🇨🇭 Switzerland", "🇹🇷 Türkiye", "🇩🇰 Denmark", "🇸🇪 Sweden", "🇳🇴 Norway", "🇭🇷 Croatia", "🇷🇸 Serbia", "🇨🇿 Czech Republic", "🇵🇱 Poland", "🇺🇦 Ukraine", "🇷🇺 Russia", "🇬🇷 Greece", "🇯🇵 Japan", "🇰🇷 Korea", "🇸🇦 Saudi Arabia", "🇺🇸 United States",  "🇲🇽 Mexico", "🇧🇷 Brazil", "🇦🇷 Argentina", "🇺🇾 Uruguay", "🇨🇱 Chile", "🇨🇴 Colombia", "🇪🇨 Ecuador",  "🇵🇾 Paraguay", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Championship", "🇪🇸 Spain Segunda", "🇮🇹 Serie B", "🇩🇪 2. Bundesliga", "🇫🇷 Ligue 2"
+            "🇪🇺 Top 5 Leagues","🇪🇺 Top 7 Leagues","🌍 All Leagues", "🌍 Outside Top 7"
         ]
 
         weights = [
-            0.23, 0.16, 0.15, 0.09, 0.06, 0.05, 0.05, 0.04, 0.03, 0.03, 0.03, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025
+            0.1, 0.1, 0.65, 0.15
         ]
 
         assert len(weights) == len(league_options), "Weights length must match the league options length"
@@ -113,10 +113,10 @@ class TestUntitled:
 
         if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 All Leagues", "🌍 Outside Top 7"]:
             if selected_position != "Goalkeepers":
-                age_options = ["Age", "U21", "U22", "U23", "U24"]
+                age_options = ["U18", "U19", "U20", "U21"]
                 selected_age = random.choice(age_options)
             else:
-                age_options = ["Age", "U24"]
+                age_options = ["U21", "U23"]
                 selected_age = random.choice(age_options)        
         else:
             selected_age = "Age"
@@ -193,7 +193,7 @@ class TestUntitled:
 
 
         # Create the tweet text dynamically
-        tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
+        tweet_text = f"{selected_league} : {selected_age} {selected_position} 2023/24\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("Short / medium", "Short")
         tweet_text = tweet_text.replace("short / medium", "short")
