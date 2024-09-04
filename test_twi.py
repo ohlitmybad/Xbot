@@ -104,7 +104,7 @@ class TestUntitled:
         ]
 
         weights = [
-            0.1, 0.1, 0.65, 0.15
+            0.1,0.1,0.65,0.15
         ]
 
         assert len(weights) == len(league_options), "Weights length must match the league options length"
