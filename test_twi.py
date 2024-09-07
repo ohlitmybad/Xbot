@@ -199,6 +199,7 @@ class TestUntitled:
         tweet_text = tweet_text.replace("short / medium", "short")
         tweet_text = tweet_text.replace("Successful a", "A")
         tweet_text = tweet_text.replace("Successful d", "D")
+        tweet_text = tweet_text.replace("Select League", "All Leagues")        
         tweet_text = tweet_text.replace("🇧🇪 Belgium", "🇧🇪 Belgium Pro League")
         tweet_text = tweet_text.replace("🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", "🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scottish Premiership")
         tweet_text = tweet_text.replace("🇦🇹 Austria", "🇦🇹 Austrian Bundesliga")
