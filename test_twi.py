@@ -100,7 +100,7 @@ class TestUntitled:
         selected_metric_y = random.choice(metric_options)
 
         league_options = [
-            "🇪🇺 Top 5 Leagues","🇪🇺 Top 7 Leagues","🌍 All Leagues", "🌍 Outside Top 7"
+            "🇪🇺 Top 5 Leagues","🇪🇺 Top 7 Leagues","🌍 Select League", "🌍 Outside Top 7"
         ]
 
         weights = [
@@ -111,7 +111,7 @@ class TestUntitled:
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
         selected_position = url_to_position.get(selected_url, None)
 
-        if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 All Leagues", "🌍 Outside Top 7"]:
+        if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
             if selected_position != "Goalkeepers":
                 age_options = ["U18", "U19", "U20", "U21"]
                 selected_age = random.choice(age_options)
