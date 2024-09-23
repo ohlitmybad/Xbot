@@ -227,7 +227,9 @@ class TestUntitled:
         tweet_text = tweet_text.replace("🇪🇨 Ecuador", "🇪🇨 Serie A")
         tweet_text = tweet_text.replace("🇵🇾 Paraguay", "🇵🇾 Primera División")
         tweet_text = tweet_text.replace(" per 90", "")
-        tweet_text = tweet_text.replace("Select League", "All Leagues")        
+        tweet_text = tweet_text.replace("Select League", "All Leagues")     
+        tweet_text = tweet_text.replace("Wingers", "Wingers & Att Mid")
+        
 
 
 
