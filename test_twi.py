@@ -56,11 +56,7 @@ class TestUntitled:
             ],
             "https://datamb.football/proplotst24/": [
                 "Aerial duels per 90","xG per 90","Shots per 90","Dribbles per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Key passes per 90","Aerial duels won %","Shots on target %","Goal conversion %","Successful dribbles %","Offensive duels won %","Accurate passes %"
-            ],
-            "https://datamb.football/plotteam/": [
-                "Goals per 90","xG per 90","Shots on target per 90","Shots on target %","Passes completed","Pass accuracy %", "Possession %","Positional attacks per 90","Counter attacks per 90","Touches in the box per 90","Goals conceded per 90","SoT against per 90","Defensive duels per 90","Defensive duel %","Aerial duels per 90", "Aerial duels %", "Passes per possession", "PPDA"
-            ]            
-            
+            ]
         }
 
         url_to_position = {
@@ -69,26 +65,23 @@ class TestUntitled:
             "https://datamb.football/proplotfb24/": "Full-backs",
             "https://datamb.football/proplotcm24/": "Midfielders",
             "https://datamb.football/proplotfw24/": "Wingers",
-            "https://datamb.football/proplotst24/": "Strikers",
-            "https://datamb.football/plotteam/": "Teams" 
+            "https://datamb.football/proplotst24/": "Strikers"
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0, 0, 0, 0, 0, 0, 1]  # Adjust weights as needed
-
+        weights2 = [0.12, 0.205, 0.12, 0.215, 0.19, 0.15]  # Adjust weights as needed
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
         time.sleep(1)
         self.driver.set_window_size(1080, 950)
-        if selected_url != "https://datamb.football/plotteam/":
-            WebDriverWait(self.driver, 60).until(
-            EC.presence_of_element_located((By.XPATH, "//input[@name='eml']"))
-            ).send_keys("tombolivier@gmail.com")
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "eml"))
+        ).send_keys("tombolivier@gmail.com")
         
-            self.driver.find_element(By.NAME, "pwd").send_keys("password")
-            self.driver.find_element(By.CSS_SELECTOR, ".SFmfllog:nth-child(3) button").click()
+        self.driver.find_element(By.NAME, "pwd").send_keys("password")
+        self.driver.find_element(By.CSS_SELECTOR, ".SFmfllog:nth-child(3) button").click()
 
         circles = self.driver.find_elements(By.TAG_NAME, 'circle')
         for circle in circles:
@@ -129,12 +122,12 @@ class TestUntitled:
             selected_age = "Age"
 
         dropdown_x = self.driver.find_element(By.ID, "select-x")
-        WebDriverWait(self.driver, 100).until(
+        WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, f"//select[@id='select-x']/option[. = '{selected_metric_x}']"))
         ).click()
 
         dropdown_y = self.driver.find_element(By.ID, "select-y")
-        WebDriverWait(self.driver, 100).until(
+        WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, f"//select[@id='select-y']/option[. = '{selected_metric_y}']"))
         ).click()
 
@@ -143,15 +136,14 @@ class TestUntitled:
             EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_league}']"))
         ).click()
 
-        if selected_url != "https://datamb.football/plotteam/":
-            dropdown = self.driver.find_element(By.ID, "select-age")
-            WebDriverWait(self.driver, 100).until(
-                EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_age}']"))
-            ).click()
+        dropdown = self.driver.find_element(By.ID, "select-age")
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_age}']"))
+        ).click()
 
 
 
-        WebDriverWait(self.driver, 100).until(
+        WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.ID, "toggle-median-lines"))
         ).click()        
 
