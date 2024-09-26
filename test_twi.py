@@ -74,7 +74,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0, 0, 0, 0, 0, 0, 1]  # Adjust weights as needed
+        weights2 = [0.09, 0.18, 0.08, 0.20, 0.20, 0.15, 0.10]  # Adjust weights as needed
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
@@ -246,6 +246,7 @@ class TestUntitled:
         tweet_text = tweet_text.replace(" per 90", "")
         tweet_text = tweet_text.replace("Select League", "All Leagues")     
         tweet_text = tweet_text.replace("Wingers", "Wingers & Att Mid")
+        tweet_text = tweet_text.replace("PPDA", "Pressing")
         
 
 
