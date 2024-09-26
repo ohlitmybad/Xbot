@@ -87,7 +87,7 @@ class TestUntitled:
         
             self.driver.find_element(By.NAME, "pwd").send_keys("password")
             self.driver.find_element(By.CSS_SELECTOR, ".SFmfllog:nth-child(3) button").click()
-            self.driver.set_window_size(1080, 950)
+            self.driver.set_window_size(1080, 960)
         circles = self.driver.find_elements(By.TAG_NAME, 'circle')
         for circle in circles:
             self.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));", circle)
