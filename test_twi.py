@@ -74,13 +74,13 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.09, 0.18, 0.08, 0.20, 0.20, 0.15, 0.10]  # Adjust weights as needed
+        weights2 = [0, 0, 0, 0, 0, 0, 1]  # Adjust weights as needed
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
         time.sleep(1)
-        self.driver.set_window_size(1080, 920)
+        self.driver.set_window_size(1080, 930)
         if selected_url != "https://datamb.football/plotteam/":
             WebDriverWait(self.driver, 60).until(
             EC.presence_of_element_located((By.XPATH, "//input[@name='eml']"))
@@ -269,7 +269,7 @@ class TestUntitled:
             first_tweet_id = response.json()['data']['id']
             
             if selected_url == "https://datamb.football/plotteam/":
-                follow_up_text = f"{selected_league} : Compare and plot more team metrics ⤵️ datamb.football/teams"
+                follow_up_text = "Compare and plot more team metrics ⤵️ datamb.football/teams"
                 follow_up_payload = {
                     "text": follow_up_text,
                     "reply": {
