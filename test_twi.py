@@ -10,11 +10,10 @@ from requests_oauthlib import OAuth1
 from selenium.webdriver.chrome.options import Options
 import os
 
-# Your credentials
-API_KEY = '9nC32tpOLmoMIn3Om5hRaXKPI'
-API_KEY_SECRET = 'ALgxkcFXqPebpivj8k0yA31lb9ogtDsbfjzlMTUBe3h5LA6981'
-ACCESS_TOKEN = '1838671117298413568-3Fbx2afKvg3JuY3dzc7vd9Mqy65Mam'
-ACCESS_TOKEN_SECRET = 'w9T3L3OJoUUxjbw0xHAUuVpKqbhAl0NGbQrRB454qFEXz'
+API_KEY = '9VG6eYAmiPw8mvRVUuN23BSee'
+API_KEY_SECRET = 'O2r4p5hyCZ7ZYjsVK73RAnReH7GnZQKahswukRbOOSfUoLevGp'
+ACCESS_TOKEN = '1389871650125094913-tHVJvdSksSHn89CCTQhgxfNpF1QENW'
+ACCESS_TOKEN_SECRET = 'LWrKGzeokBFq7IxbA18gFsyE4bAGgeJYc6gTNDTIUJoV2'
 
 class TestUntitled:
     def setup_method(self, method):
