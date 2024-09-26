@@ -11,10 +11,10 @@ from selenium.webdriver.chrome.options import Options
 import os
 
 # Your credentials
-API_KEY = '9VG6eYAmiPw8mvRVUuN23BSee'
-API_KEY_SECRET = 'O2r4p5hyCZ7ZYjsVK73RAnReH7GnZQKahswukRbOOSfUoLevGp'
-ACCESS_TOKEN = '1389871650125094913-tHVJvdSksSHn89CCTQhgxfNpF1QENW'
-ACCESS_TOKEN_SECRET = 'LWrKGzeokBFq7IxbA18gFsyE4bAGgeJYc6gTNDTIUJoV2'
+API_KEY = '9nC32tpOLmoMIn3Om5hRaXKPI'
+API_KEY_SECRET = 'ALgxkcFXqPebpivj8k0yA31lb9ogtDsbfjzlMTUBe3h5LA6981'
+ACCESS_TOKEN = '1838671117298413568-3Fbx2afKvg3JuY3dzc7vd9Mqy65Mam'
+ACCESS_TOKEN_SECRET = 'w9T3L3OJoUUxjbw0xHAUuVpKqbhAl0NGbQrRB454qFEXz'
 
 class TestUntitled:
     def setup_method(self, method):
@@ -56,7 +56,11 @@ class TestUntitled:
             ],
             "https://datamb.football/proplotst24/": [
                 "Aerial duels per 90","xG per 90","Shots per 90","Dribbles per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Key passes per 90","Aerial duels won %","Shots on target %","Goal conversion %","Successful dribbles %","Offensive duels won %","Accurate passes %"
-            ]
+            ],
+            "https://datamb.football/plotteam/": [
+                "Goals per 90","xG per 90","Shots on target per 90","Shots on target %","Passes completed","Pass accuracy %", "Possession %","Positional attacks per 90","Counter attacks per 90","Touches in the box per 90","Goals conceded per 90","SoT against per 90","Defensive duels per 90","Defensive duel %","Aerial duels per 90", "Aerial duels %", "Passes per possession", "PPDA"
+            ]            
+            
         }
 
         url_to_position = {
@@ -65,24 +69,26 @@ class TestUntitled:
             "https://datamb.football/proplotfb24/": "Full-backs",
             "https://datamb.football/proplotcm24/": "Midfielders",
             "https://datamb.football/proplotfw24/": "Wingers",
-            "https://datamb.football/proplotst24/": "Strikers"
+            "https://datamb.football/proplotst24/": "Strikers",
+            "https://datamb.football/plotteam/": "Teams" 
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.12, 0.205, 0.12, 0.215, 0.19, 0.15]  # Adjust weights as needed
+        weights2 = [0.09, 0.18, 0.08, 0.20, 0.20, 0.15, 0.10]  # Adjust weights as needed
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
         time.sleep(1)
-        self.driver.set_window_size(1080, 950)
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.NAME, "eml"))
-        ).send_keys("tombolivier@gmail.com")
+        self.driver.set_window_size(1080, 920)
+        if selected_url != "https://datamb.football/plotteam/":
+            WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((By.XPATH, "//input[@name='eml']"))
+            ).send_keys("tombolivier@gmail.com")
         
-        self.driver.find_element(By.NAME, "pwd").send_keys("password")
-        self.driver.find_element(By.CSS_SELECTOR, ".SFmfllog:nth-child(3) button").click()
-
+            self.driver.find_element(By.NAME, "pwd").send_keys("password")
+            self.driver.find_element(By.CSS_SELECTOR, ".SFmfllog:nth-child(3) button").click()
+            self.driver.set_window_size(1080, 950)
         circles = self.driver.find_elements(By.TAG_NAME, 'circle')
         for circle in circles:
             self.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));", circle)
@@ -99,11 +105,16 @@ class TestUntitled:
         metric_options.remove(selected_metric_x)
         selected_metric_y = random.choice(metric_options)
 
-        league_options = [
+        if selected_url == "https://datamb.football/plotteam/":
+            league_options = ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League","🇪🇸 La Liga", "🇩🇪 Bundesliga", "🇮🇹 Serie A", "🇫🇷 Ligue 1","🇵🇹 Liga Portugal", "🇳🇱 Eredivisie"]
+            weights = [0.25, 0.35, 0.15, 0.06, 0.05, 0.05, 0.05, 0.02, 0.02]
+        else:
+
+            league_options = [
             "🇪🇺 Top 5 Leagues","🇪🇺 Top 7 Leagues","🌍 Select League", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League","🇪🇸 La Liga", "🇩🇪 Bundesliga", "🇮🇹 Serie A", "🇫🇷 Ligue 1","🌍 Outside Top 7", "🇵🇹 Liga Portugal", "🇳🇱 Eredivisie","🇧🇪 Belgium", "🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", "🇦🇹 Austria", "🇨🇭 Switzerland", "🇹🇷 Türkiye", "🇩🇰 Denmark", "🇸🇪 Sweden", "🇳🇴 Norway", "🇭🇷 Croatia", "🇷🇸 Serbia", "🇨🇿 Czech Republic", "🇵🇱 Poland", "🇺🇦 Ukraine", "🇷🇺 Russia", "🇬🇷 Greece", "🇯🇵 Japan", "🇰🇷 Korea", "🇸🇦 Saudi Arabia", "🇺🇸 United States",  "🇲🇽 Mexico", "🇧🇷 Brazil", "🇦🇷 Argentina", "🇺🇾 Uruguay", "🇨🇱 Chile", "🇨🇴 Colombia", "🇪🇨 Ecuador",  "🇵🇾 Paraguay", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Championship", "🇪🇸 Spain Segunda", "🇮🇹 Serie B", "🇩🇪 2. Bundesliga", "🇫🇷 Ligue 2"
         ]
 
-        weights = [
+            weights = [
             0.23, 0.16, 0.15, 0.09, 0.06, 0.05, 0.05, 0.04, 0.03, 0.03, 0.03, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025
         ]
 
@@ -122,12 +133,12 @@ class TestUntitled:
             selected_age = "Age"
 
         dropdown_x = self.driver.find_element(By.ID, "select-x")
-        WebDriverWait(self.driver, 10).until(
+        WebDriverWait(self.driver, 100).until(
             EC.element_to_be_clickable((By.XPATH, f"//select[@id='select-x']/option[. = '{selected_metric_x}']"))
         ).click()
 
         dropdown_y = self.driver.find_element(By.ID, "select-y")
-        WebDriverWait(self.driver, 10).until(
+        WebDriverWait(self.driver, 100).until(
             EC.element_to_be_clickable((By.XPATH, f"//select[@id='select-y']/option[. = '{selected_metric_y}']"))
         ).click()
 
@@ -136,14 +147,15 @@ class TestUntitled:
             EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_league}']"))
         ).click()
 
-        dropdown = self.driver.find_element(By.ID, "select-age")
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_age}']"))
-        ).click()
+        if selected_url != "https://datamb.football/plotteam/":
+            dropdown = self.driver.find_element(By.ID, "select-age")
+            WebDriverWait(self.driver, 100).until(
+                EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_age}']"))
+            ).click()
 
 
 
-        WebDriverWait(self.driver, 10).until(
+        WebDriverWait(self.driver, 100).until(
             EC.element_to_be_clickable((By.ID, "toggle-median-lines"))
         ).click()        
 
@@ -174,7 +186,9 @@ class TestUntitled:
         media_id = response.json()['media_id_string']
 
         # Add alt text to the uploaded image
-        alt_text = "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2024/25 dataset.\n\nPositions are determined via the player's average heat map.\n\nSubscribe to DataMB Pro for more leagues and tools!"  # Add your alt text here
+        alt_text = "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2024/25 dataset.\n\nCompare and plot more team metrics for free on datamb.football"  # Add your alt text here
+        if selected_url != "https://datamb.football/plotteam/":
+            alt_text = "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2024/25 dataset.\n\nPositions are determined via the player's average heat map.\n\nSubscribe to DataMB Pro for more leagues and tools!"  # Add your alt text here
         metadata_url = "https://upload.twitter.com/1.1/media/metadata/create.json"
         metadata_payload = {
     "media_id": media_id,
@@ -193,7 +207,10 @@ class TestUntitled:
 
 
         # Create the tweet text dynamically
-        tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
+        if selected_url == "https://datamb.football/plotteam/":
+            tweet_text = f"{selected_league} : {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
+        else:
+            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("Short / medium", "Short")
         tweet_text = tweet_text.replace("short / medium", "short")
@@ -249,9 +266,36 @@ class TestUntitled:
         
         if response.status_code == 201:
             print("Tweet successfully sent!")
+            first_tweet_id = response.json()['data']['id']
+            
+            if selected_url == "https://datamb.football/plotteam/":
+                follow_up_text = f"{selected_league} : Compare and plot more team metrics ⤵️ datamb.football/teams"
+                follow_up_payload = {
+                    "text": follow_up_text,
+                    "reply": {
+                        "in_reply_to_tweet_id": first_tweet_id
+                }
+            }
+            else:
+                follow_up_text = "Compare Top 7 League players, or subscribe to access more leagues, metrics, and tools ⤵️ datamb.football"
+                follow_up_payload = {
+                    "text": follow_up_text,
+                    "reply": {
+                        "in_reply_to_tweet_id": first_tweet_id
+                }
+            }
+
+            
+            # Send the follow-up tweet
+            follow_up_response = requests.post(tweet_url, json=follow_up_payload, auth=auth)
+            
+            if follow_up_response.status_code == 201:
+                print("Follow-up tweet successfully sent!")
+            else:
+                print("Failed to send follow-up tweet:", follow_up_response.status_code, follow_up_response.text)
+
         else:
             print("Failed to send tweet:", response.status_code, response.text)
-
 
 
 if __name__ == "__main__":
