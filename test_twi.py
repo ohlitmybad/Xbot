@@ -30,8 +30,6 @@ class TestUntitled:
         urls_and_metrics = {
             "https://datamb.football/proplotgk24/": [ 
                 "Prevented goals per 90", "Save rate %", "Accurate passes %", 
-                "Accurate short / medium passes %", 
-                "Accurate long passes %", 
                  "Passes per 90", "Long passes per 90", "Short / medium passes per 90", "Successful defensive actions per 90"
             ],
             "https://datamb.football/proplotcb24/": [
@@ -39,22 +37,22 @@ class TestUntitled:
         "Aerial duels per 90", "Sliding tackles per 90", 
         "Interceptions per 90", "Dribbles per 90", 
         "Progressive runs per 90", "Passes per 90", "Forward passes per 90", 
-        "Long passes per 90", "Key passes per 90", "Passes to final third per 90", 
+        "Long passes per 90", "Passes to final third per 90", 
         "Progressive passes per 90", "Defensive duels won %", 
         "Aerial duels won %", "Accurate passes %", "Accurate forward passes %", 
         "Accurate progressive passes %"
             ],
             "https://datamb.football/proplotfb24/": [
-                "Successful defensive actions per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","Interceptions per 90","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Successful dribbles %","Offensive duels won %","Accurate passes %","Accurate forward passes %","Accurate progressive passes %"
+                "Successful defensive actions per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","Interceptions per 90","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Progressive runs per 90","Accelerations per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Successful dribbles %","Offensive duels won %","Accurate passes %","Accurate forward passes %","Accurate progressive passes %"
             ],
             "https://datamb.football/proplotcm24/": [
                 "Successful defensive actions per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","PAdj Sliding tackles","Interceptions per 90","PAdj Interceptions","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Accurate passes %","Accurate forward passes %","Accurate progressive passes %","Successful dribbles %","Offensive duels won %"
             ],
             "https://datamb.football/proplotfw24/": [
-                "Shots on target %","Goal conversion %","Accurate crosses %","Successful dribbles %","Offensive duels won %","Successful defensive actions per 90","Successful attacking actions per 90","xG per 90","Goals per 90", "Assists per 90", "Shots per 90","Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Deep completions per 90","Progressive passes per 90"
+                "Shots on target %","Goal conversion %","Accurate crosses %","Successful dribbles %","Offensive duels won %","Successful attacking actions per 90","xG per 90","Goals per 90", "Assists per 90", "Shots per 90","Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Deep completions per 90","Progressive passes per 90"
             ],
             "https://datamb.football/proplotst24/": [
-                "Aerial duels per 90","xG per 90","Shots per 90","Dribbles per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Key passes per 90","Aerial duels won %","Shots on target %","Goal conversion %","Successful dribbles %","Offensive duels won %","Accurate passes %"
+                "Aerial duels per 90","xG per 90","Shots per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Aerial duels won %","Shots on target %","Goal conversion %","Offensive duels won %","Accurate passes %"
             ],
             "https://datamb.football/plotteam/": [
                 "Goals per 90","xG per 90","Shots on target per 90","Shots on target %","Passes completed","Pass accuracy %", "Possession %","Positional attacks per 90","Counter attacks per 90","Touches in the box per 90","Goals conceded per 90","SoT against per 90","Defensive duels per 90","Defensive duel %","Aerial duels per 90", "Aerial duels %", "Passes per possession", "PPDA"
@@ -73,7 +71,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.09, 0.18, 0.08, 0.20, 0.20, 0.15, 0.10]  # Adjust weights as needed
+        weights2 = [0.05, 0.17, 0.06, 0.26, 0.21, 0.11, 0.14]  # Adjust weights as needed
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
@@ -106,16 +104,25 @@ class TestUntitled:
 
         if selected_url == "https://datamb.football/plotteam/":
             league_options = ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League","🇪🇸 La Liga", "🇩🇪 Bundesliga", "🇮🇹 Serie A", "🇫🇷 Ligue 1","🇵🇹 Liga Portugal", "🇳🇱 Eredivisie"]
-            weights = [0.25, 0.35, 0.15, 0.06, 0.05, 0.05, 0.05, 0.02, 0.02]
+            weights = [0.22, 0.42, 0.22, 0.06, 0.04, 0.04, 0, 0, 0]
         else:
 
+
             league_options = [
-            "🇪🇺 Top 5 Leagues","🇪🇺 Top 7 Leagues","🌍 Select League", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League","🇪🇸 La Liga", "🇩🇪 Bundesliga", "🇮🇹 Serie A", "🇫🇷 Ligue 1","🌍 Outside Top 7", "🇵🇹 Liga Portugal", "🇳🇱 Eredivisie","🇧🇪 Belgium", "🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", "🇦🇹 Austria", "🇨🇭 Switzerland", "🇹🇷 Türkiye", "🇩🇰 Denmark", "🇸🇪 Sweden", "🇳🇴 Norway", "🇭🇷 Croatia", "🇷🇸 Serbia", "🇨🇿 Czech Republic", "🇵🇱 Poland", "🇺🇦 Ukraine", "🇷🇺 Russia", "🇬🇷 Greece", "🇯🇵 Japan", "🇰🇷 Korea", "🇸🇦 Saudi Arabia", "🇺🇸 United States",  "🇲🇽 Mexico", "🇧🇷 Brazil", "🇦🇷 Argentina", "🇺🇾 Uruguay", "🇨🇱 Chile", "🇨🇴 Colombia", "🇪🇨 Ecuador",  "🇵🇾 Paraguay", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Championship", "🇪🇸 Spain Segunda", "🇮🇹 Serie B", "🇩🇪 2. Bundesliga", "🇫🇷 Ligue 2"
-        ]
+    "🇪🇺 Top 5 Leagues",
+    "🇪🇺 Top 7 Leagues",
+    "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League",
+    "🇪🇸 La Liga",
+    "🇩🇪 Bundesliga", 
+    "🇮🇹 Serie A"        ]
 
             weights = [
-            0.23, 0.16, 0.15, 0.09, 0.06, 0.05, 0.05, 0.04, 0.03, 0.03, 0.03, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025
-        ]
+    0.45,
+    0.30,
+    0.15,
+    0.05, 
+    0.025,
+    0.025          ]
 
         assert len(weights) == len(league_options), "Weights length must match the league options length"
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
@@ -123,7 +130,7 @@ class TestUntitled:
 
         if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
             if selected_position != "Goalkeepers":
-                age_options = ["Age", "U21", "U22", "U23", "U24"]
+                age_options = ["Age", "U19", "U21", "U22", "U23", "U24"]
                 selected_age = random.choice(age_options)
             else:
                 age_options = ["Age", "U24"]
