@@ -10,6 +10,8 @@ from requests_oauthlib import OAuth1
 from selenium.webdriver.chrome.options import Options
 import os
 
+time.sleep(50 * 60)  # 50 minutes in seconds
+
 API_KEY = '9VG6eYAmiPw8mvRVUuN23BSee'
 API_KEY_SECRET = 'O2r4p5hyCZ7ZYjsVK73RAnReH7GnZQKahswukRbOOSfUoLevGp'
 ACCESS_TOKEN = '1389871650125094913-tHVJvdSksSHn89CCTQhgxfNpF1QENW'
