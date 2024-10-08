@@ -257,7 +257,7 @@ class TestUntitled:
         
 
 
-
+        time.sleep(80 * 60)
 
 
         # Create the tweet with the media attached
