@@ -257,8 +257,6 @@ class TestUntitled:
         
 
 
-        time.sleep(50 * 60)  # 50 minutes in seconds
-
 
 
 
