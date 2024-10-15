@@ -78,7 +78,7 @@ class TestUntitled:
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
         time.sleep(1)
-        self.driver.set_window_size(1080, 950)
+        self.driver.set_window_size(1080, 980)
         if selected_url != "https://datamb.football/plotteam/":
             WebDriverWait(self.driver, 60).until(
             EC.presence_of_element_located((By.XPATH, "//input[@name='eml']"))
