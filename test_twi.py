@@ -256,7 +256,6 @@ class TestUntitled:
         tweet_text = tweet_text.replace("PPDA", "Pressing")
         
 
-        time.sleep(70 * 60)
 
 
         # Create the tweet with the media attached
