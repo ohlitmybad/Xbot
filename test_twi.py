@@ -131,7 +131,7 @@ class TestUntitled:
 
         if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
             if selected_position != "Goalkeepers":
-                age_options = ["Age", "U19", "U21", "U22", "U23", "U24"]
+                age_options = ["Age", "U20", "U21", "U22", "U23", "U24"]
                 selected_age = random.choice(age_options)
             else:
                 age_options = ["Age", "U24"]
