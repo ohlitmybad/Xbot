@@ -72,7 +72,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0, 0, 0, 0, 0, 0, 1]  # Adjust weights as needed
+        weights2 = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, .94]  # Adjust weights as needed
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
