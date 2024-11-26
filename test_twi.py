@@ -215,9 +215,9 @@ class TestUntitled:
 
         # Create the tweet text dynamically
         if selected_url == "https://datamb.football/plotteam/":
-            tweet_text = f"{selected_league} : {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
+            tweet_text = f"{selected_league} : {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nFree trial 👉 datamb.football"
         else:
-            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\n👉 datamb.football"
+            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nFree trial 👉 datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("Short / medium", "Short")
         tweet_text = tweet_text.replace("short / medium", "short")
