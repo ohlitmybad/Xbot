@@ -101,7 +101,7 @@ class TestUntitled:
         metric_options.remove(selected_metric_x)
         selected_metric_y = random.choice(metric_options)
 
-        if selected_url == "https://datamb.football/plotteam/":
+        if selected_url == "https://datamb.football/proteamplot/":
             league_options = ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League","🇪🇸 La Liga", "🇩🇪 Bundesliga", "🇮🇹 Serie A", "🇫🇷 Ligue 1","🇵🇹 Liga Portugal", "🇳🇱 Eredivisie"]
             weights = [0.22, 0.42, 0.22, 0.06, 0.04, 0.04, 0, 0, 0]
         else:
@@ -152,7 +152,7 @@ class TestUntitled:
             EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_league}']"))
         ).click()
 
-        if selected_url != "https://datamb.football/plotteam/":
+        if selected_url != "https://datamb.football/proteamplot/":
             dropdown = self.driver.find_element(By.ID, "select-age")
             WebDriverWait(self.driver, 100).until(
                 EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_age}']"))
@@ -271,7 +271,7 @@ class TestUntitled:
             print("Tweet successfully sent!")
             first_tweet_id = response.json()['data']['id']
             
-            if selected_url == "https://datamb.football/plotteam/":
+            if selected_url == "https://datamb.football/proteamplot/":
                 follow_up_text = "Compare and plot more team metrics ⤵️ datamb.football/teams"
                 follow_up_payload = {
                     "text": follow_up_text,
