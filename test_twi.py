@@ -55,7 +55,7 @@ class TestUntitled:
             "https://datamb.football/proplotst24/": [
                 "Aerial duels per 90","xG per 90","Shots per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Aerial duels won %","Shots on target %","Goal conversion %","Offensive duels won %","Accurate passes %"
             ],
-            "https://datamb.football/plotteam/": [
+            "https://datamb.football/proteamplot/": [
                 "Goals per 90","xG per 90","Shots on target per 90","Shots on target %","Passes completed","Pass accuracy %", "Possession %","Positional attacks per 90","Counter attacks per 90","Touches in the box per 90","Goals conceded per 90","SoT against per 90","Defensive duels per 90","Defensive duel %","Aerial duels per 90", "Aerial duels %", "Passes per possession", "PPDA"
             ]            
             
@@ -68,25 +68,23 @@ class TestUntitled:
             "https://datamb.football/proplotcm24/": "Midfielders",
             "https://datamb.football/proplotfw24/": "Wingers",
             "https://datamb.football/proplotst24/": "Strikers",
-            "https://datamb.football/plotteam/": "Teams" 
+            "https://datamb.football/proteamplot/": "Teams" 
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.06, 0.20, 0.07, 0.29, 0.25, 0.13, 0]  # 0.05, 0.17, 0.06, 0.26, 0.21, 0.11, 0.14
+        weights2 = [0, 0, 0, 0, 0, 0, 1]  # 0.05, 0.17, 0.06, 0.26, 0.21, 0.11, 0.14
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
         time.sleep(1)
-        self.driver.set_window_size(1080, 980)
-        if selected_url != "https://datamb.football/plotteam/":
-            WebDriverWait(self.driver, 60).until(
-            EC.presence_of_element_located((By.XPATH, "//input[@name='eml']"))
-            ).send_keys("tombolivier@gmail.com")
+        WebDriverWait(self.driver, 60).until(
+        EC.presence_of_element_located((By.XPATH, "//input[@name='eml']"))
+        ).send_keys("tombolivier@gmail.com")
         
-            self.driver.find_element(By.NAME, "pwd").send_keys("password")
-            self.driver.find_element(By.CSS_SELECTOR, ".SFmfllog:nth-child(3) button").click()
-            self.driver.set_window_size(1080, 980)
+        self.driver.find_element(By.NAME, "pwd").send_keys("password")
+        self.driver.find_element(By.CSS_SELECTOR, ".SFmfllog:nth-child(3) button").click()
+        self.driver.set_window_size(1080, 980)
         circles = self.driver.find_elements(By.TAG_NAME, 'circle')
         for circle in circles:
             self.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));", circle)
