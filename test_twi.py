@@ -127,16 +127,15 @@ class TestUntitled:
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
         selected_position = url_to_position.get(selected_url, None)
         
-        if selected_position != "Teams":
-            if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
-                if selected_position != "Goalkeepers":
-                    age_options = ["Age", "U20", "U21", "U22", "U23", "U24"]
-                    selected_age = random.choice(age_options)
-                else:
-                    age_options = ["Age", "U24"]
-                    selected_age = random.choice(age_options)        
+        if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
+            if selected_position != "Goalkeepers":
+                age_options = ["Age", "U20", "U21", "U22", "U23", "U24"]
+                selected_age = random.choice(age_options)
             else:
-                selected_age = "Age"
+                age_options = ["Age", "U24"]
+                selected_age = random.choice(age_options)        
+        else:
+            selected_age = "Age"
 
         dropdown_x = self.driver.find_element(By.ID, "select-x")
         WebDriverWait(self.driver, 100).until(
