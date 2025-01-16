@@ -126,7 +126,8 @@ class TestUntitled:
         assert len(weights) == len(league_options), "Weights length must match the league options length"
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
         selected_position = url_to_position.get(selected_url, None)
-        if selected_url != "https://datamb.football/proteamplot/":
+        
+        if selected_position != "Teams":
             if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
                 if selected_position != "Goalkeepers":
                     age_options = ["Age", "U20", "U21", "U22", "U23", "U24"]
