@@ -72,7 +72,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0, 0, 0, 0, 0, 0 ,1]  
+        weights2 = [0.05, 0.17, 0.06, 0.26, 0.21, 0.11, 0.14]  
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
@@ -131,6 +131,9 @@ class TestUntitled:
             if selected_position != "Goalkeepers":
                 age_options = ["Age", "U20", "U21", "U22", "U23", "U24"]
                 selected_age = random.choice(age_options)
+            if selected_position == "Teams":
+                age_options = ["Age"]
+                selected_age = random.choice(age_options) 
             else:
                 age_options = ["Age", "U24"]
                 selected_age = random.choice(age_options)        
