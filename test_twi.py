@@ -82,7 +82,7 @@ class TestUntitled:
         EC.presence_of_element_located((By.XPATH, "//input[@name='eml']"))
         ).send_keys("tombolivier@gmail.com")
         
-        self.driver.find_element(By.NAME, "pwd").send_keys("password")
+        self.driver.find_element(By.NAME, "pwd").send_keys("password1")
         self.driver.find_element(By.CSS_SELECTOR, ".SFmfllog:nth-child(3) button").click()
         self.driver.set_window_size(1080, 980)
         circles = self.driver.find_elements(By.TAG_NAME, 'circle')
