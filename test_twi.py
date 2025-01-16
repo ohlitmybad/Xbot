@@ -72,7 +72,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.05, 0.17, 0.06, 0.26, 0.21, 0.11, 0.14]  
+        weights2 = [0, 0, 0, 0, 0, 0 ,1]  
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
@@ -126,16 +126,16 @@ class TestUntitled:
         assert len(weights) == len(league_options), "Weights length must match the league options length"
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
         selected_position = url_to_position.get(selected_url, None)
-
-        if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
-            if selected_position != "Goalkeepers":
-                age_options = ["Age", "U20", "U21", "U22", "U23", "U24"]
-                selected_age = random.choice(age_options)
+        if selected_url != "https://datamb.football/proteamplot/":
+            if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
+                if selected_position != "Goalkeepers":
+                    age_options = ["Age", "U20", "U21", "U22", "U23", "U24"]
+                    selected_age = random.choice(age_options)
+                else:
+                    age_options = ["Age", "U24"]
+                    selected_age = random.choice(age_options)        
             else:
-                age_options = ["Age", "U24"]
-                selected_age = random.choice(age_options)        
-        else:
-            selected_age = "Age"
+                selected_age = "Age"
 
         dropdown_x = self.driver.find_element(By.ID, "select-x")
         WebDriverWait(self.driver, 100).until(
