@@ -218,7 +218,7 @@ class TestUntitled:
         if selected_url == "https://datamb.football/proteamplot/":
             tweet_text = f"{selected_league} : {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot teams 👉 datamb.football"
         else:
-            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nFree trial 👉 datamb.football"
+            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot more 👉 datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("Short / medium", "Short")
         tweet_text = tweet_text.replace("short / medium", "short")
@@ -283,7 +283,7 @@ class TestUntitled:
                 }
             }
             else:
-                follow_up_text = "Compare Top 7 League players, or join the free trial for more leagues, metrics, and tools ⤵️ datamb.football"
+                follow_up_text = "Compare Top 7 League players, or subscribet to access more leagues, metrics, and tools ⤵️ datamb.football"
                 follow_up_payload = {
                     "text": follow_up_text,
                     "reply": {
