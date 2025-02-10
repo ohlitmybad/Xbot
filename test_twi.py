@@ -30,30 +30,30 @@ class TestUntitled:
     def test_untitled(self):
         urls_and_metrics = {
             "https://datamb.football/proplotgk24/": [ 
-                "Prevented goals per 90", "Save rate %", "Accurate passes %", 
-                 "Passes per 90", "Long passes per 90", "Short / medium passes per 90", "Successful defensive actions per 90"
+                "Prevented goals per 90", "Save percentage %", "Pass completion %", 
+                 "Passes per 90", "Long passes per 90", "Short passes per 90"
             ],
             "https://datamb.football/proplotcb24/": [
-                "Successful defensive actions per 90", "Defensive duels per 90", 
+                "Possessions won per 90", "Defensive duels per 90", 
         "Aerial duels per 90", "Sliding tackles per 90", 
         "Interceptions per 90", "Dribbles per 90", 
-        "Progressive runs per 90", "Passes per 90", "Forward passes per 90", 
+        "Progressive carries per 90", "Passes per 90", "Forward passes per 90", 
         "Long passes per 90", "Passes to final third per 90", 
         "Progressive passes per 90", "Defensive duels won %", 
-        "Aerial duels won %", "Accurate passes %", "Accurate forward passes %", 
+        "Aerial duels won %", "Pass completion %", "Forward pass completion %", 
         "Accurate progressive passes %"
             ],
             "https://datamb.football/proplotfb24/": [
-                "Successful defensive actions per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","Interceptions per 90","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Progressive runs per 90","Accelerations per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Successful dribbles %","Offensive duels won %","Accurate passes %","Accurate forward passes %","Accurate progressive passes %"
+                "Possessions won per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","Interceptions per 90","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Progressive carries per 90","Accelerations per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Dribble success rate %","Offensive duels won %","Pass completion %","Forward Pass completion %","Accurate progressive passes %"
             ],
             "https://datamb.football/proplotcm24/": [
-                "Successful defensive actions per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","PAdj Sliding tackles","Interceptions per 90","PAdj Interceptions","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Accurate passes %","Accurate forward passes %","Accurate progressive passes %","Successful dribbles %","Offensive duels won %"
+                "Possessions won per 90","Defensive duels per 90","Aerial duels per 90","Sliding tackles per 90","Sliding tackles (PAdj)","Interceptions per 90","Interceptions (PAdj)","Successful attacking actions per 90","xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90","Dribbles per 90","Offensive duels per 90","Progressive carries per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","Forward passes per 90","Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Through passes per 90","Deep completions per 90","Progressive passes per 90","Defensive duels won %","Aerial duels won %","Pass completion %","Forward Pass completion %","Accurate progressive passes %","Dribble success rate %","Offensive duels won %"
             ],
             "https://datamb.football/proplotfw24/": [
-                "Shots on target %","Goal conversion %","Accurate crosses %","Successful dribbles %","Offensive duels won %","Successful attacking actions per 90","xG per 90","Goals per 90", "Assists per 90", "Shots per 90","Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive runs per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Deep completions per 90","Progressive passes per 90"
+                "Shots on target %","Goal conversion %","Accurate crosses %","Dribble success rate %","Offensive duels won %","Successful attacking actions per 90","xG per 90","Goals per 90", "Assists per 90", "Shots per 90","Crosses per 90","Dribbles per 90","Offensive duels per 90","Touches in box per 90","Progressive carries per 90","Accelerations per 90","Fouls suffered per 90","Passes per 90","xA per 90","Shot assists per 90","Key passes per 90","Passes to final third per 90","Passes to penalty area per 90","Deep completions per 90","Progressive passes per 90"
             ],
             "https://datamb.football/proplotst24/": [
-                "Aerial duels per 90","xG per 90","Shots per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Aerial duels won %","Shots on target %","Goal conversion %","Offensive duels won %","Accurate passes %"
+                "Aerial duels per 90","xG per 90","Shots per 90","Touches in box per 90","Goals per 90", "Assists per 90","xA per 90","Aerial duels won %","Shots on target %","Goal conversion %","Offensive duels won %","Pass completion %"
             ],
             "https://datamb.football/proteamplot/": [
                 "Goals per 90","xG per 90","Shots on target per 90","Shots on target %","Passes completed","Pass accuracy %", "Possession %","Positional attacks per 90","Counter attacks per 90","Touches in the box per 90","Goals conceded per 90","SoT against per 90","Defensive duels per 90","Defensive duel %","Aerial duels per 90", "Aerial duels %", "Passes per possession", "PPDA"
