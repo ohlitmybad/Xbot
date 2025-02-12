@@ -31,7 +31,7 @@ class TestUntitled:
         urls_and_metrics = {
             "https://datamb.football/proplotgk24/": [ 
                 "Prevented goals per 90", "Save percentage %", "Pass completion %", 
-                 "Passes per 90", "Long passes per 90", "Short passes per 90"
+                 "Passes per 90", "Long passes per 90", "Short passes per 90", "Saves per 90"
             ],
             "https://datamb.football/proplotcb24/": [
                 "Possessions won per 90", "Defensive duels per 90", 
@@ -222,8 +222,6 @@ class TestUntitled:
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("Short / medium", "Short")
         tweet_text = tweet_text.replace("short / medium", "short")
-        tweet_text = tweet_text.replace("Successful a", "A")
-        tweet_text = tweet_text.replace("Successful d", "D")
         tweet_text = tweet_text.replace("🇧🇪 Belgium", "🇧🇪 Belgium Pro League")
         tweet_text = tweet_text.replace("🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland", "🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scottish Premiership")
         tweet_text = tweet_text.replace("🇦🇹 Austria", "🇦🇹 Austrian Bundesliga")
