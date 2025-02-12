@@ -65,7 +65,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.05, 0.17, 0.06, 0.26, 0.21, 0.11, 0.14]  
+        weights2 = [0.04, 0.12, 0.05, 0.28, 0.21, 0.15, 0.15]  
 
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
@@ -109,12 +109,12 @@ class TestUntitled:
     "🇮🇹 Serie A"        ]
 
             weights = [
-    0.45,
-    0.30,
-    0.15,
-    0.05, 
-    0.025,
-    0.025          ]
+    0.46,
+    0.32,
+    0.14,
+    0.04, 
+    0.02,
+    0.02          ]
 
         assert len(weights) == len(league_options), "Weights length must match the league options length"
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
@@ -122,7 +122,7 @@ class TestUntitled:
         
         if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
             if selected_position != "Goalkeepers":
-                age_options = ["Age", "U20", "U21", "U22", "U23", "U24"]
+                age_options = ["Age", "U19", "U20", "U21", "U22", "U23", "U24"]
                 selected_age = random.choice(age_options)
             if selected_position == "Teams":
                 age_options = ["Age"]
