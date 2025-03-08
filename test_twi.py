@@ -9,6 +9,8 @@ import requests
 from requests_oauthlib import OAuth1
 from selenium.webdriver.chrome.options import Options
 import os
+import shutil
+from pathlib import Path
 
 
 API_KEY = '9VG6eYAmiPw8mvRVUuN23BSee'
@@ -19,9 +21,21 @@ ACCESS_TOKEN_SECRET = 'LWrKGzeokBFq7IxbA18gFsyE4bAGgeJYc6gTNDTIUJoV2'
 class TestUntitled:
     def setup_method(self, method):
         chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")
+        
+        # Set up Chrome to automatically download files to the current working directory
+        current_dir = os.getcwd()
+        prefs = {
+            "download.default_directory": current_dir,
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+            "safebrowsing.enabled": True
+        }
+        chrome_options.add_experimental_option("prefs", prefs)
+        
         self.driver = webdriver.Chrome(options=chrome_options)
+        
+        # Store the download path for later use
+        self.download_path = current_dir
 
     def teardown_method(self):
         self.driver.quit()
@@ -65,8 +79,8 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.04, 0.12, 0.05, 0.28, 0.21, 0.15, 0.15]  
-
+        weights2 = [0.04, 0.11, 0.04, 0.27, 0.20, 0.14, 0.2]  
+        
         # Select a URL based on weights
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
@@ -82,13 +96,6 @@ class TestUntitled:
         for circle in circles:
             self.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));", circle)
 
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "select-x"))
-        )
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "select-y"))
-        )
-
         metric_options = urls_and_metrics[selected_url]
         selected_metric_x = random.choice(metric_options)
         metric_options.remove(selected_metric_x)
@@ -98,8 +105,6 @@ class TestUntitled:
             league_options = ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League","🇪🇸 La Liga", "🇩🇪 Bundesliga", "🇮🇹 Serie A", "🇫🇷 Ligue 1","🇵🇹 Liga Portugal", "🇳🇱 Eredivisie"]
             weights = [0.22, 0.42, 0.22, 0.06, 0.04, 0.04, 0, 0, 0]
         else:
-
-
             league_options = [
     "🇪🇺 Top 5 Leagues",
     "🇪🇺 Top 7 Leagues",
@@ -120,48 +125,112 @@ class TestUntitled:
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
         selected_position = url_to_position.get(selected_url, None)
         
-        if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
-            if selected_position != "Goalkeepers":
-                age_options = ["Age", "U19", "U20", "U21", "U22", "U23", "U24"]
-                selected_age = random.choice(age_options)
-            if selected_position == "Teams":
-                age_options = ["Age"]
-                selected_age = random.choice(age_options) 
-            else:
-                age_options = ["Age", "U24"]
-                selected_age = random.choice(age_options)        
-        else:
-            selected_age = "Age"
-
-        dropdown_x = self.driver.find_element(By.ID, "select-x")
-        WebDriverWait(self.driver, 100).until(
-            EC.element_to_be_clickable((By.XPATH, f"//select[@id='select-x']/option[. = '{selected_metric_x}']"))
-        ).click()
-
-        dropdown_y = self.driver.find_element(By.ID, "select-y")
-        WebDriverWait(self.driver, 100).until(
-            EC.element_to_be_clickable((By.XPATH, f"//select[@id='select-y']/option[. = '{selected_metric_y}']"))
-        ).click()
-
-        dropdown = self.driver.find_element(By.ID, "select-league")
-        WebDriverWait(self.driver, 100).until(
-            EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_league}']"))
-        ).click()
-
+        # Handle age selection for non-team pages
         if selected_url != "https://datamb.football/proteamplot/":
+            if selected_league in ["🇪🇺 Top 7 Leagues", "🇪🇺 Top 5 Leagues", "🌍 Select League", "🌍 Outside Top 7"]:
+                if selected_position != "Goalkeepers":
+                    age_options = ["Age", "U19", "U20", "U21", "U22", "U23", "U24"]
+                    selected_age = random.choice(age_options)
+                else:
+                    age_options = ["Age", "U24"]
+                    selected_age = random.choice(age_options)        
+            else:
+                selected_age = "Age"
+
+        # Different handling based on page type
+        if selected_url == "https://datamb.football/proteamplot/":
+            # For team plot page - use the hidden select elements directly
+            # This is more reliable than trying to interact with the custom UI elements
+            
+            # Wait for the select elements to be present (even if hidden)
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "select-x"))
+            )
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "select-y"))
+            )
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "select-league"))
+            )
+            
+            # Use JavaScript to set the values and trigger change events
+            # Set X-axis metric
+            self.driver.execute_script(f"""
+                var selectX = document.getElementById('select-x');
+                for (var i = 0; i < selectX.options.length; i++) {{
+                    if (selectX.options[i].text === '{selected_metric_x}') {{
+                        selectX.selectedIndex = i;
+                        var event = new Event('change');
+                        selectX.dispatchEvent(event);
+                        break;
+                    }}
+                }}
+            """)
+            
+            # Set Y-axis metric
+            self.driver.execute_script(f"""
+                var selectY = document.getElementById('select-y');
+                for (var i = 0; i < selectY.options.length; i++) {{
+                    if (selectY.options[i].text === '{selected_metric_y}') {{
+                        selectY.selectedIndex = i;
+                        var event = new Event('change');
+                        selectY.dispatchEvent(event);
+                        break;
+                    }}
+                }}
+            """)
+            
+            # Set league
+            # Extract the league name without the flag emoji for matching
+            league_name = selected_league.split(" ", 1)[1] if " " in selected_league else selected_league
+            self.driver.execute_script(f"""
+                var selectLeague = document.getElementById('select-league');
+                for (var i = 0; i < selectLeague.options.length; i++) {{
+                    if (selectLeague.options[i].text.includes('{league_name}')) {{
+                        selectLeague.selectedIndex = i;
+                        var event = new Event('change');
+                        selectLeague.dispatchEvent(event);
+                        break;
+                    }}
+                }}
+            """)
+            
+        else:
+            # For other pages - use the original select elements
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "select-x"))
+            )
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "select-y"))
+            )
+            
+            dropdown_x = self.driver.find_element(By.ID, "select-x")
+            WebDriverWait(self.driver, 100).until(
+                EC.element_to_be_clickable((By.XPATH, f"//select[@id='select-x']/option[. = '{selected_metric_x}']"))
+            ).click()
+
+            dropdown_y = self.driver.find_element(By.ID, "select-y")
+            WebDriverWait(self.driver, 100).until(
+                EC.element_to_be_clickable((By.XPATH, f"//select[@id='select-y']/option[. = '{selected_metric_y}']"))
+            ).click()
+
+            dropdown = self.driver.find_element(By.ID, "select-league")
+            WebDriverWait(self.driver, 100).until(
+                EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_league}']"))
+            ).click()
+
+            # Age selection for non-team pages
             dropdown = self.driver.find_element(By.ID, "select-age")
             WebDriverWait(self.driver, 100).until(
                 EC.element_to_be_clickable((By.XPATH, f"//option[. = '{selected_age}']"))
             ).click()
 
-
-
-        WebDriverWait(self.driver, 100).until(
+        # Toggle median lines - works for both page types
+        WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.ID, "toggle-median-lines"))
         ).click()        
 
-        
-
+        # Toggle dark mode - works for both page types
         self.driver.find_element(By.CSS_SELECTOR, ".toggle-icon").click()
 
         self.driver.execute_script("""
@@ -169,7 +238,75 @@ class TestUntitled:
     document.body.style.overflow = 'hidden';  // Hide scroll bars on body
 """)
         time.sleep(4)
-        self.driver.save_screenshot('screenshot.png')
+        
+        # For team pages, use the button click approach
+        if selected_url == "https://datamb.football/proteamplot/":
+            # Remove any existing screenshot files before downloading a new one
+            for filename in ["team-performance-chart.png"]:
+                if os.path.exists(os.path.join(self.download_path, filename)):
+                    try:
+                        os.remove(os.path.join(self.download_path, filename))
+                        print(f"Removed existing file: {filename}")
+                    except Exception as e:
+                        print(f"Could not remove file {filename}: {e}")
+            
+            # Click on the screenshot button to download the image
+            screenshot_button = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, "//button[@onclick='takeScreenshot()']"))
+            )
+            screenshot_button.click()
+            
+            # Wait for the download to complete
+            time.sleep(5)
+            
+            # The downloaded file will be in the current directory with the name "team-performance-chart.png"
+            expected_file = os.path.join(self.download_path, "DataMB Screenshot.png")
+            
+            # Check if file exists and use that one
+            if os.path.exists(expected_file):
+                print(f"Successfully downloaded: {expected_file}")
+                
+                # Rename the file to screenshot.png
+                screenshot_path = os.path.join(self.download_path, "screenshot.png")
+                try:
+                    # If screenshot.png already exists, remove it first
+                    if os.path.exists(screenshot_path):
+                        os.remove(screenshot_path)
+                    # Rename the downloaded file to screenshot.png
+                    os.rename(expected_file, screenshot_path)
+                    print(f"Renamed to: {screenshot_path}")
+                except Exception as e:
+                    print(f"Could not rename file: {e}")
+            else:
+                print("Warning: Downloaded team screenshot file not found")
+        
+        # For non-team pages, use Selenium's screenshot capability directly
+        else:
+            # Remove any existing screenshot.png file
+            screenshot_path = os.path.join(self.download_path, "screenshot.png")
+            if os.path.exists(screenshot_path):
+                try:
+                    os.remove(screenshot_path)
+                    print(f"Removed existing file: screenshot.png")
+                except Exception as e:
+                    print(f"Could not remove file screenshot.png: {e}")
+            
+            # Take screenshot using Selenium
+            try:
+                # Get the chart element for a more focused screenshot
+                chart_element = WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, ".chart-container"))
+                )
+                
+                # Take screenshot of the chart element
+                chart_element.screenshot(screenshot_path)
+                print(f"Successfully captured screenshot using Selenium: {screenshot_path}")
+            except Exception as e:
+                # Fallback to full page screenshot if element screenshot fails
+                print(f"Element screenshot failed: {e}. Falling back to full page screenshot.")
+                self.driver.save_screenshot(screenshot_path)
+                print(f"Successfully captured full page screenshot: {screenshot_path}")
+
 
 
         # Upload the screenshot to Twitter
