@@ -10,12 +10,16 @@ from requests_oauthlib import OAuth1
 from selenium.webdriver.chrome.options import Options
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
+# Load environment variables from a .env file
+from dotenv import load_dotenv
+load_dotenv()
 
-API_KEY = '9VG6eYAmiPw8mvRVUuN23BSee'
-API_KEY_SECRET = 'O2r4p5hyCZ7ZYjsVK73RAnReH7GnZQKahswukRbOOSfUoLevGp'
-ACCESS_TOKEN = '1389871650125094913-tHVJvdSksSHn89CCTQhgxfNpF1QENW'
-ACCESS_TOKEN_SECRET = 'LWrKGzeokBFq7IxbA18gFsyE4bAGgeJYc6gTNDTIUJoV2'
+API_KEY = os.getenv('API_KEY')
+API_KEY_SECRET = os.getenv('API_KEY_SECRET')
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+ACCESS_TOKEN_SECRET = os.getenv('ACCESS_TOKEN_SECRET')
 
 class TestUntitled:
     def setup_method(self, method):
@@ -358,10 +362,11 @@ class TestUntitled:
         dots = self.driver.find_elements(By.CSS_SELECTOR, ".team-label, .dot")
             
         if len(dots) < 15:
+            print(f"Found only {len(dots)} dots/labels, which is less than minimum required (15). Retrying...")
             return False  # Signal that we need to retry
         
         screenshot_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[@onclick='takeScreenshot()']"))
+            EC.element_to_be_clickable((By.XPATH, "//button[@onclick='takeScreenshot()"))
         )
         screenshot_button.click()
         
@@ -415,13 +420,16 @@ class TestUntitled:
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("Top 7 Leagues", "🇪🇺 Top 7 Leagues")
         tweet_text = tweet_text.replace("Top 5 Leagues", "🇪🇺 Top 5 Leagues")
-        tweet_text = tweet_text.replace("Premier League", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League")
+        tweet_text = tweet_text.replace("Premier League", "🏴 Premier League")
         tweet_text = tweet_text.replace("La Liga", "🇪🇸 La Liga")
         tweet_text = tweet_text.replace("Bundesliga", "🇩🇪 Bundesliga")
         tweet_text = tweet_text.replace("Serie A", "🇮🇹 Serie A")
         tweet_text = tweet_text.replace(" per 90", "")
         tweet_text = tweet_text.replace("Wingers", "Wingers & Att Mid")
         tweet_text = tweet_text.replace("PPDA", "Pressing")
+        tweet_text = tweet_text.replace("completion %", " %")
+        tweet_text = tweet_text.replace("accuracy %", " %")
+        
         
 
 
@@ -495,7 +503,6 @@ class TestUntitled:
                 time.sleep(2)
                 self.driver.quit()
                 self.setup_method(None)
-
 
 
 
