@@ -389,7 +389,7 @@ class TestUntitled:
         # Add alt text to the uploaded image
         alt_text = "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2024/25 dataset.\n\nCompare and plot more team metrics for free on datamb.football"  # Add your alt text here
         if selected_url != "https://datamb.football/proteamplot/":
-            alt_text = "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2024/25 dataset.\n\nPositions are determined via the player's average heat map.\n\nSubscribe to DataMB Pro for more leagues and tools!"  # Add your alt text here
+            alt_text = "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2024/25 dataset.\n\nPositions are determined via the player's average heat map.\n\nJoin the free trial for more leagues and tools!"  # Add your alt text here
         metadata_url = "https://upload.twitter.com/1.1/media/metadata/create.json"
         metadata_payload = {
     "media_id": media_id,
@@ -411,7 +411,7 @@ class TestUntitled:
         if selected_url == "https://datamb.football/proteamplot/":
             tweet_text = f"{selected_league} : {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot teams 👉 datamb.football"
         else:
-            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot more 👉 datamb.football"
+            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nFree trial 👉 datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("Top 7 Leagues", "🇪🇺 Top 7 Leagues")
         tweet_text = tweet_text.replace("Top 5 Leagues", "🇪🇺 Top 5 Leagues")
