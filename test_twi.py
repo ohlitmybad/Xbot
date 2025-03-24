@@ -452,7 +452,7 @@ class TestUntitled:
                 }
             }
             else:
-                follow_up_text = "Compare Top 7 League players, or subscribe to access more leagues, metrics, and tools ⤵️ datamb.football"
+                follow_up_text = "Compare Top 7 League players, or join the free trial to plot more leagues and metrics ⤵️ datamb.football"
                 follow_up_payload = {
                     "text": follow_up_text,
                     "reply": {
