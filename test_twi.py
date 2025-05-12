@@ -178,6 +178,7 @@ class TestUntitled:
             ["Sliding tackles per 90", "Sliding tackles (PAdj)"],
             ["Interceptions per 90", "Interceptions (PAdj)"],
             ["SoT against per 90", "Shots on target %"],
+            ["Passes per possession", "Passes completed"]
         ]
         
         # Function to filter out similar metrics
@@ -205,7 +206,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.04, 0.11, 0.04, 0.27, 0.20, 0.14, 0.2]  
+        weights2 = [0.06, 0.13, 0.06, 0.28, 0.22, 0.14, 0.11]  
         
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
