@@ -206,7 +206,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.06, 0.13, 0.06, 0.28, 0.22, 0.14, 0.11]  
+        weights2 = [0.06, 0.15, 0.07, 0.31, 0.25, 0.16, 0]  
         
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
