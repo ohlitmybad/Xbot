@@ -55,6 +55,7 @@ class TestUntitled:
         return seconds
     
     def run_test_iteration(self):
+        # Adjust metrics
         urls_and_metrics = {
             "https://datamb.football/proplotgk24/": [ 
                 "Prevented goals per 90", "Save percentage %", "Pass completion %", 
@@ -206,7 +207,7 @@ class TestUntitled:
         }
 
         urls = list(urls_and_metrics.keys())
-        weights2 = [0.06, 0.15, 0.07, 0.31, 0.25, 0.16, 0]  
+        weights2 = [0.06, 0.15, 0.07, 0.31, 0.25, 0.16, 0]  # Adjust weights for position
         
         selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
@@ -246,12 +247,11 @@ class TestUntitled:
             league_options = ["Top 7 Leagues", "Top 5 Leagues", "Premier League", 
                              "La Liga", "Bundesliga", "Serie A", "Ligue 1", 
                              "Liga Portugal", "Eredivisie"]
-            weights = [0.22, 0.42, 0.22, 0.06, 0.04, 0.04, 0, 0, 0]
+            weights = [0.22, 0.42, 0.22, 0.06, 0.04, 0.04, 0, 0, 0] # Adjust weights for league
         else:
             league_options = ["Top 7 Leagues", "Top 5 Leagues", "Premier League", 
-                             "La Liga", "Bundesliga", "Serie A", "Ligue 1", 
-                             "Liga Portugal", "Eredivisie"]
-            weights = [0.32, 0.46, 0.14, 0.04, 0.02, 0.02, 0, 0, 0]
+                             "La Liga", "All Leagues"]
+            weights = [0.2, 0.4, 0.03, 0.02, 0.35] # Adjust weights for league
 
         assert len(weights) == len(league_options), "Weights length must match the league options length"
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
@@ -259,13 +259,21 @@ class TestUntitled:
         
         selected_age = "Age"  # Default
         if selected_url != "https://datamb.football/proteamplot/":
-            if selected_league in ["Top 7 Leagues", "Top 5 Leagues"]:
-                if selected_position != "Goalkeepers":
-                    age_options = ["Age", "U19", "U20", "U21", "U22", "U23", "U24"]
-                    selected_age = random.choice(age_options)
+            if selected_league == "All Leagues":
+                if selected_position != "Goalkeeper":
+                    age_options = ["U18", "U19", "U20", "U21", "U23", "U24"]
+                else:
+                    age_options = ["U19", "U21", "U23", "U24"]
+            elif selected_league in ["Top 7 Leagues", "Top 5 Leagues"]:
+                if selected_position != "Goalkeeper":
+                    age_options = ["Age", "U21", "U23"]
                 else:
                     age_options = ["Age", "U24"]
-                    selected_age = random.choice(age_options)
+            else:
+                selected_age = "Age"
+            
+        
+        selected_age = random.choice(age_options)
 
         self.driver.execute_script(f"""
             var selectX = document.getElementById('select-x');
@@ -358,8 +366,11 @@ class TestUntitled:
      
         dots = self.driver.find_elements(By.CSS_SELECTOR, ".team-label, .dot")
             
-        if len(dots) < 15:
+        if len(dots) < 35:
             return False  # Signal that we need to retry
+        if len(dots) > 800:
+            return False  # Signal that we need to retry
+        
         
         screenshot_button = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//button[@onclick='takeScreenshot()']"))
@@ -405,15 +416,13 @@ class TestUntitled:
         selected_position = url_to_position[selected_url]
         selected_age = selected_age.replace("Age", "")
 
-        
-
-
         # Create the tweet text dynamically
         if selected_url == "https://datamb.football/proteamplot/":
             tweet_text = f"{selected_league} : {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot teams 👉 datamb.football"
         else:
             tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot more 👉 datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
+        tweet_text = tweet_text.replace("All Leagues", "🌍 All Leagues")
         tweet_text = tweet_text.replace("Top 7 Leagues", "🇪🇺 Top 7 Leagues")
         tweet_text = tweet_text.replace("Top 5 Leagues", "🇪🇺 Top 5 Leagues")
         tweet_text = tweet_text.replace("Premier League", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League")
@@ -423,8 +432,8 @@ class TestUntitled:
         tweet_text = tweet_text.replace(" per 90", "")
         tweet_text = tweet_text.replace("Wingers", "Wingers & Att Mid")
         tweet_text = tweet_text.replace("PPDA", "Pressing")
-        tweet_text = tweet_text.replace("completion %", " %")
-        tweet_text = tweet_text.replace("accuracy %", " %")
+        tweet_text = tweet_text.replace("completion %", "%")
+        tweet_text = tweet_text.replace("accuracy %", "%")
         
 
 
