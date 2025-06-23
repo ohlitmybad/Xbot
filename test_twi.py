@@ -12,10 +12,10 @@ import os
 from pathlib import Path
 
 
-API_KEY = '9VG6eYAmiPw8mvRVUuN23BSee'
-API_KEY_SECRET = 'O2r4p5hyCZ7ZYjsVK73RAnReH7GnZQKahswukRbOOSfUoLevGp'
-ACCESS_TOKEN = '1389871650125094913-tHVJvdSksSHn89CCTQhgxfNpF1QENW'
-ACCESS_TOKEN_SECRET = 'LWrKGzeokBFq7IxbA18gFsyE4bAGgeJYc6gTNDTIUJoV2'
+API_KEY = os.getenv('API_KEY')
+API_KEY_SECRET = os.getenv('API_KEY_SECRET')
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+ACCESS_TOKEN_SECRET = os.getenv('ACCESS_TOKEN_SECRET')
 
 class TestUntitled:
     def setup_method(self, method):
