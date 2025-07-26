@@ -152,6 +152,8 @@ class TestUntitled:
             ["Shots on target %", "Goal conversion %"],
             ["xG per 90", "npxG per 90"],
             ["xG per 90", "xG per 100 touches"],
+            ["xG+xA per 90", "xG per 90"],
+            ["xG+xA per 90", "xA per 90"],
             ["npxG per 90", "xG per 100 touches"],
             ["Pass completion %","Forward pass completion %", "Progressive pass accuracy %"],
             ["Offensive duels won %", "Successful dribbles %"],
