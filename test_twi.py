@@ -146,7 +146,7 @@ class TestUntitled:
             ]            
         }
 
-        # Define groups of similar metrics that shouldn't be plotted together
+        
         similar_metrics_groups = [
             ["xG/Shot", "npxG/Shot"],
             ["Shots on target %", "Goal conversion %"],
