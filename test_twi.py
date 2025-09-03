@@ -401,9 +401,9 @@ class TestUntitled:
         media_id = response.json()['media_id_string']
 
         # Add alt text to the uploaded image
-        alt_text = "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2024/25 dataset.\n\nCompare and plot more team metrics for free on datamb.football"  # Add your alt text here
+        alt_text = "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2025/26 dataset.\n\nCompare and plot more team metrics for free on datamb.football"  # Add your alt text here
         if selected_url != "https://datamb.football/proteamplot/":
-            alt_text = "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2024/25 dataset.\n\nPositions are determined via the player's average heat map.\n\nSubscribe for more leagues and tools!"  # Add your alt text here
+            alt_text = "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2025/26 dataset.\n\nPositions are determined via the player's average heat map.\n\nSubscribe for more leagues and tools!"  # Add your alt text here
         metadata_url = "https://upload.twitter.com/1.1/media/metadata/create.json"
         metadata_payload = {
     "media_id": media_id,
