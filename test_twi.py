@@ -388,6 +388,107 @@ class TestUntitled:
         time.sleep(2)
 
 
+        # Upload the screenshot to Twitter
+        upload_url = "https://upload.twitter.com/1.1/media/upload.json"
+        auth = OAuth1(API_KEY, API_KEY_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+        
+        with open('DataMB Screenshot.png', 'rb') as image_file:
+            files = {'media': image_file}
+            response = requests.post(upload_url, files=files, auth=auth)
+        
+        if response.status_code != 200:
+            print("Failed to upload media:", response.status_code, response.text)
+            return
+        
+        media_id = response.json()['media_id_string']
+
+        # Add alt text to the uploaded image
+        alt_text = "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2025/26 dataset.\n\nCompare and plot more team metrics for free on datamb.football"  # Add your alt text here
+        if selected_url != "https://datamb.football/proteamplot/":
+            alt_text = "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2025/26 dataset.\n\nPositions are determined via the player's average heat map.\n\nSubscribe for more leagues and tools!"  # Add your alt text here
+        metadata_url = "https://upload.twitter.com/1.1/media/metadata/create.json"
+        metadata_payload = {
+    "media_id": media_id,
+    "alt_text": {"text": alt_text}
+}
+        metadata_response = requests.post(metadata_url, json=metadata_payload, auth=auth)
+
+        if metadata_response.status_code != 200:
+            print("Failed to create metadata:", metadata_response.status_code, metadata_response.text)
+            return
+        
+        selected_position = url_to_position[selected_url]
+        selected_age = selected_age.replace("Age", "")
+
+        # Create the tweet text dynamically
+        if selected_url == "https://datamb.football/proteamplot/":
+            tweet_text = f"{selected_league} : {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot teams 👉 datamb.football"
+        else:
+            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot more 👉 datamb.football"
+        tweet_text = tweet_text.replace("  ", " ")
+        tweet_text = tweet_text.replace("All Leagues", "🌍 All Leagues")
+        tweet_text = tweet_text.replace("Top 7 Leagues", "🇪🇺 Top 7 Leagues")
+        tweet_text = tweet_text.replace("Top 5 Leagues", "🇪🇺 Top 5 Leagues")
+        tweet_text = tweet_text.replace("Premier League", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League")
+        tweet_text = tweet_text.replace("La Liga", "🇪🇸 La Liga")
+        tweet_text = tweet_text.replace("Bundesliga", "🇩🇪 Bundesliga")
+        tweet_text = tweet_text.replace("Serie A", "🇮🇹 Serie A")
+        tweet_text = tweet_text.replace(" per 90", "")
+        tweet_text = tweet_text.replace("Wingers", "Wingers & Att Mid")
+        tweet_text = tweet_text.replace("PPDA", "Pressing")
+        tweet_text = tweet_text.replace("completion %", "%")
+        tweet_text = tweet_text.replace("accuracy %", "%")
+        
+
+
+
+        # Create the tweet with the media attached
+        tweet_url = "https://api.twitter.com/2/tweets"
+        payload = {
+            "text": tweet_text,
+            "media": {
+                "media_ids": [media_id]
+            }
+        }
+        
+        response = requests.post(tweet_url, json=payload, auth=auth)
+        
+        if response.status_code == 201:
+            print("Tweet successfully sent!")
+            first_tweet_id = response.json()['data']['id']
+            
+            if selected_url == "https://datamb.football/proteamplot/":
+                follow_up_text = "Compare and plot more team metrics ⤵️ datamb.football/teams"
+                follow_up_payload = {
+                    "text": follow_up_text,
+                    "reply": {
+                        "in_reply_to_tweet_id": first_tweet_id
+                }
+            }
+            else:
+                follow_up_text = "Compare Top 7 League players, or subscribe to plot more leagues and metrics ⤵️ datamb.football"
+                follow_up_payload = {
+                    "text": follow_up_text,
+                    "reply": {
+                        "in_reply_to_tweet_id": first_tweet_id
+                }
+            }
+
+            
+            # Send the follow-up tweet
+            follow_up_response = requests.post(tweet_url, json=follow_up_payload, auth=auth)
+            
+            if follow_up_response.status_code == 201:
+                print("Follow-up tweet successfully sent!")
+            else:
+                print("Failed to send follow-up tweet:", follow_up_response.status_code, follow_up_response.text)
+
+        else:
+            print("Failed to send tweet:", response.status_code, response.text)
+
+        return True  # Signal successful completion
+
+
     def test_untitled(self):
         max_retries = 2
         retry_count = 0
