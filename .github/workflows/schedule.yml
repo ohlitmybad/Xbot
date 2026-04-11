@@ -26,5 +26,7 @@ jobs:
           API_KEY_SECRET: ${{ secrets.API_KEY_SECRET }}
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+          DATAMB_EMAIL: ${{ secrets.DATAMB_EMAIL }}
+          DATAMB_PASSWORD: ${{ secrets.DATAMB_PASSWORD }}
         run: |
           python test_twi.py
