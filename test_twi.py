@@ -23,7 +23,8 @@ class TestUntitled:
     def setup_method(self, method):
         chrome_options = Options()
         chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")        
+        chrome_options.add_argument("--disable-gpu")      
+        chrome_options.add_argument("--window-size=950,650")
         # Set the download directory to the current directory
         self.screenshot_dir = os.path.dirname(os.path.abspath(__file__))
         
@@ -226,7 +227,10 @@ class TestUntitled:
 
         self.driver.find_element(By.NAME, "pwd").send_keys(DATAMB_PASSWORD)
         self.driver.find_element(By.CSS_SELECTOR, ".SFfrm button").click()
-        self.driver.maximize_window()
+        if self._headless:
+            self.driver.set_window_size(950, 650)
+        else:
+            self.driver.maximize_window()
         
         WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, "select-all-button"))).click()
         
