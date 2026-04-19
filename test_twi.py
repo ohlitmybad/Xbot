@@ -227,10 +227,7 @@ class TestUntitled:
 
         self.driver.find_element(By.NAME, "pwd").send_keys(DATAMB_PASSWORD)
         self.driver.find_element(By.CSS_SELECTOR, ".SFfrm button").click()
-        if self._headless:
-            self.driver.set_window_size(950, 650)
-        else:
-            self.driver.maximize_window()
+        self.driver.set_window_size(950, 650)
         
         WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, "select-all-button"))).click()
         
