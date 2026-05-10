@@ -28,5 +28,7 @@ jobs:
           ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
           DATAMB_EMAIL: ${{ secrets.DATAMB_EMAIL }}
           DATAMB_PASSWORD: ${{ secrets.DATAMB_PASSWORD }}
+          BUFFER_EMAIL: ${{ secrets.BUFFER_EMAIL }}
+          BUFFER_PASSWORD: ${{ secrets.BUFFER_PASSWORD }}
         run: |
           python test_twi.py
