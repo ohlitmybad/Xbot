@@ -50,7 +50,7 @@ def _make_fresh_driver(*, headless: bool = True, window_size: Tuple[int, int] = 
     chrome_options.add_argument("--force-device-scale-factor=2")
     if headless:
         chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-gpu")      
     if download_dir:
         prefs = {
             "download.default_directory": download_dir,
@@ -1349,40 +1349,36 @@ class TestUntitled:
             follow_up_text = "Compare Top 7 League players, or join the free trial to plot more leagues and metrics ⤵️ datamb.football"
 
         screenshot_path = os.path.join(self.screenshot_dir, "DataMB Screenshot.png")
-        schedule_twitter_post_via_buffer(
-            self.driver,
-            tweet_text,
-            screenshot_path,
-            alt_text=alt_text,
-            reply_text=follow_up_text,
-        )
-        print("Post scheduled in Buffer (~2 minutes).")
+        self._buffer_post_text = tweet_text
+        self._buffer_image_path = screenshot_path
+        self._buffer_alt_text = alt_text
+        self._buffer_reply_text = follow_up_text
 
-        return True  # Signal successful completion
-
+        return True
 
     def test_untitled(self):
         max_retries = 2
         retry_count = 0
-        
+
         while retry_count < max_retries:
-            try:
-                if self.run_test_iteration():
-                    break 
-                retry_count += 1
-                if retry_count < max_retries:
-                    time.sleep(2)  # Add a small delay between retries
-                    _quit_driver(self.driver)
-                    self.setup_method(None)
-                else:
-                    pytest.fail(f"Failed to find sufficient dots/labels after {max_retries} attempts")
-            except Exception as e:
-                retry_count += 1
-                if retry_count >= max_retries:
-                    raise
+            if self.run_test_iteration():
+                break
+            retry_count += 1
+            if retry_count < max_retries:
                 time.sleep(2)
                 _quit_driver(self.driver)
                 self.setup_method(None)
+            else:
+                pytest.fail(f"Failed to find sufficient dots/labels after {max_retries} attempts")
+
+        schedule_twitter_post_via_buffer(
+            self.driver,
+            self._buffer_post_text,
+            self._buffer_image_path,
+            alt_text=self._buffer_alt_text,
+            reply_text=self._buffer_reply_text,
+        )
+        print("Post scheduled in Buffer (~2 minutes).")
 
 
 
