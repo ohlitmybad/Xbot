@@ -30,5 +30,7 @@ jobs:
           DATAMB_PASSWORD: ${{ secrets.DATAMB_PASSWORD }}
           BUFFER_EMAIL: ${{ secrets.BUFFER_EMAIL }}
           BUFFER_PASSWORD: ${{ secrets.BUFFER_PASSWORD }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
           python test_twi.py
