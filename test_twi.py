@@ -1,12 +1,14 @@
+import base64
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
 import time
 from datetime import datetime, timedelta
-from typing import Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import pytest
 from selenium import webdriver
@@ -217,6 +219,172 @@ def set_buffer_schedule_time_combobox_input(driver, time_input_el, time_str: str
     time.sleep(0.2)
 
 
+_BUFFER_VERIFY_LINK_RE = re.compile(
+    r"https://login\.buffer\.com/verify-login\?jwt=[^\s\"'<>]+",
+    re.IGNORECASE,
+)
+
+
+def _buffer_gmail_token_path() -> str:
+    return (
+        os.environ.get("BUFFER_GMAIL_TOKEN", "").strip()
+        or os.environ.get("GMAIL_TOKEN_PATH", "").strip()
+    )
+
+
+def _buffer_gmail_search_query() -> str:
+    return os.environ.get(
+        "BUFFER_GMAIL_QUERY",
+        'from:hello@youraccount.buffer.com subject:"Confirm your recent login attempt"',
+    ).strip()
+
+
+_BUFFER_GMAIL_INSTALLED_CLIENT: Dict[str, Any] = {
+    "installed": {
+        "client_id": os.getenv("CLIENT_ID"),
+        "project_id": "xbot-496214",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": os.getenv("CLIENT_SECRET"),
+        "redirect_uris": ["http://localhost"],
+    }
+}
+
+
+def _gmail_service_for_buffer():
+    from google.auth.transport.requests import Request
+    from google.oauth2.credentials import Credentials
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from googleapiclient.discovery import build
+
+    scopes = ["https://www.googleapis.com/auth/gmail.readonly"]
+    token_path = _buffer_gmail_token_path()
+    creds: Optional[Any] = None
+    if token_path and os.path.isfile(token_path):
+        creds = Credentials.from_authorized_user_file(token_path, scopes)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+            if token_path:
+                with open(token_path, "w", encoding="utf-8") as fh:
+                    fh.write(creds.to_json())
+        else:
+            flow = InstalledAppFlow.from_client_config(_BUFFER_GMAIL_INSTALLED_CLIENT, scopes)
+            creds = flow.run_local_server(port=0, access_type="offline", prompt="consent")
+            if token_path:
+                with open(token_path, "w", encoding="utf-8") as fh:
+                    fh.write(creds.to_json())
+    if not creds:
+        raise RuntimeError("Buffer email verification: Gmail OAuth failed (no credentials).")
+    return build("gmail", "v1", credentials=creds, cache_discovery=False)
+
+
+def _gmail_collect_text_parts(payload: Dict[str, Any]) -> List[str]:
+    out: List[str] = []
+    mime = (payload.get("mimeType") or "").lower()
+    if "parts" in payload:
+        for part in payload["parts"]:
+            out.extend(_gmail_collect_text_parts(part))
+        return out
+    body = payload.get("body") or {}
+    data = body.get("data")
+    if data and mime in ("text/html", "text/plain"):
+        try:
+            raw = base64.urlsafe_b64decode(data.encode("ascii"))
+            out.append(raw.decode("utf-8", errors="replace"))
+        except Exception:
+            pass
+    return out
+
+
+def _extract_buffer_verify_link_from_bodies(bodies: List[str]) -> Optional[str]:
+    joined = "\n".join(bodies)
+    m = _BUFFER_VERIFY_LINK_RE.search(joined)
+    if m:
+        return m.group(0).rstrip(").,]}>'\"")
+    m2 = re.search(
+        r"https://login\.buffer\.com/verify-login\?[^\s\"'<>]+", joined, re.IGNORECASE
+    )
+    if m2:
+        return m2.group(0).rstrip(").,]}>'\"")
+    return None
+
+
+def fetch_buffer_verify_link_from_gmail() -> Optional[str]:
+    """Latest Buffer 'confirm login' email: extract https://login.buffer.com/verify-login?jwt=..."""
+    service = _gmail_service_for_buffer()
+    newer = os.environ.get("BUFFER_GMAIL_NEWER_THAN", "2h").strip() or "2h"
+    base_q = _buffer_gmail_search_query()
+    queries = [
+        f"{base_q} newer_than:{newer}",
+        f'from:buffer.com subject:"Confirm your recent login" newer_than:{newer}',
+        f'from:buffer.com subject:"login attempt" newer_than:{newer}',
+    ]
+    messages: List[Dict[str, str]] = []
+    for q in queries:
+        result = service.users().messages().list(userId="me", q=q, maxResults=25).execute()
+        messages = result.get("messages") or []
+        if messages:
+            break
+    if not messages:
+        return None
+    best: Optional[Dict[str, Any]] = None
+    best_ts = -1
+    for ref in messages:
+        mid = ref["id"]
+        msg = service.users().messages().get(userId="me", id=mid, format="full").execute()
+        ts = int(msg.get("internalDate") or 0)
+        if ts >= best_ts:
+            best_ts = ts
+            best = msg
+    if not best:
+        return None
+    bodies = _gmail_collect_text_parts(best["payload"])
+    return _extract_buffer_verify_link_from_bodies(bodies)
+
+
+def _complete_buffer_login_after_submit(driver) -> None:
+    """Wait for Buffer publish, or resolve email MFA via Gmail API and open the verify link."""
+    initial_wait = float(os.environ.get("BUFFER_LOGIN_PUBLISH_WAIT", "18"))
+    try:
+        WebDriverWait(driver, initial_wait).until(EC.url_contains("publish.buffer.com"))
+        return
+    except Exception:
+        pass
+
+    token_path = _buffer_gmail_token_path()
+    if not token_path or not os.path.isfile(token_path):
+        WebDriverWait(driver, 50).until(EC.url_contains("publish.buffer.com"))
+        return
+
+    poll_seconds = float(os.environ.get("BUFFER_GMAIL_POLL_SECONDS", "150"))
+    interval = max(2, int(os.environ.get("BUFFER_GMAIL_POLL_INTERVAL", "4")))
+    deadline = time.time() + poll_seconds
+
+    while time.time() < deadline:
+        try:
+            if "publish.buffer.com" in driver.current_url:
+                return
+        except Exception:
+            pass
+
+        try:
+            link = fetch_buffer_verify_link_from_gmail()
+        except Exception as exc:
+            raise RuntimeError(f"Buffer MFA: Gmail API failed: {exc}") from exc
+        if link:
+            driver.get(link)
+            try:
+                WebDriverWait(driver, 40).until(EC.url_contains("publish.buffer.com"))
+                return
+            except Exception:
+                pass
+        time.sleep(interval)
+
+    WebDriverWait(driver, 20).until(EC.url_contains("publish.buffer.com"))
+
+
 def _login_buffer(driver, email: str, password: str) -> None:
     driver.get("https://login.buffer.com/login")
     try:
@@ -261,7 +429,7 @@ def _login_buffer(driver, email: str, password: str) -> None:
     if not login_button:
         raise RuntimeError("Buffer login button not found")
     login_button.click()
-    WebDriverWait(driver, 45).until(EC.url_contains("publish.buffer.com"))
+    _complete_buffer_login_after_submit(driver)
 
 
 def _open_composer(driver) -> None:
