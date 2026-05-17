@@ -1488,7 +1488,7 @@ class TestUntitled:
         if selected_url == "https://datamb.football/proteamplot/":
             tweet_text = f"{selected_league} : {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot teams 👉 datamb.football"
         else:
-            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nFree trial 👉 datamb.football"
+            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot more 👉 datamb.football"
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("All Leagues", "🌍 All Leagues")
         tweet_text = tweet_text.replace("Top 7 Leagues", "🇪🇺 Top 7 Leagues")
@@ -1509,12 +1509,12 @@ class TestUntitled:
         alt_text = (
             "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2025/26 dataset.\n\nCompare and plot more team metrics for free on datamb.football"
             if selected_url == "https://datamb.football/proteamplot/"
-            else "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2025/26 dataset.\n\nPositions are determined via the player's average heat map.\n\nJoin the free trial for more leagues and tools!"
+            else "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2025/26 dataset.\n\nPositions are determined via the player's average heat map.\n\nSubscribe for more leagues and tools!"
         )
         if selected_url == "https://datamb.football/proteamplot/":
             follow_up_text = "Compare and plot more team metrics ⤵️ datamb.football/teams"
         else:
-            follow_up_text = "Compare Top 7 League players, or join the free trial to plot more leagues and metrics ⤵️ datamb.football"
+            follow_up_text = "Compare Top 7 League players, or subscribe to plot more leagues and metrics ⤵️ datamb.football"
 
         screenshot_path = os.path.join(self.screenshot_dir, "DataMB Screenshot.png")
         self._buffer_post_text = tweet_text
