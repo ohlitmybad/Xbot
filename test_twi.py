@@ -394,43 +394,32 @@ def _login_buffer(driver, email: str, password: str) -> None:
     except Exception:
         pass
 
-    def _dismiss_cookie_banner():
-        for sel in ("[data-cky-tag='accept-button']", ".cky-btn-accept", "button.cky-btn"):
-            try:
-                btn = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, sel)))
-                btn.click()
-                time.sleep(0.3)
-                return
-            except Exception:
-                pass
-        # fallback: hide it via JS
-        try:
-            driver.execute_script("""
-                var bar = document.querySelector('.cky-consent-bar, [data-cky-tag="notice"]');
-                if (bar) bar.style.display = 'none';
-            """)
-        except Exception:
-            pass
+    # Nuke the entire CookieYes banner from the DOM
+    driver.execute_script("""
+        var selectors = [
+            '.cky-consent-container',
+            '.cky-consent-bar',
+            '.cky-optout-action-area',
+            '[data-cky-tag]',
+            '#cky-consent',
+            '.cky-overlay'
+        ];
+        selectors.forEach(function(sel) {
+            document.querySelectorAll(sel).forEach(function(el) {
+                el.parentNode && el.parentNode.removeChild(el);
+            });
+        });
+    """)
+    time.sleep(0.3)
 
-    _dismiss_cookie_banner()  # before email
-
-    email_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.NAME, "email")))
+    email_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "email")))
     email_field.clear()
-    try:
-        email_field.click()
-    except Exception:
-        driver.execute_script("arguments[0].click();", email_field)
+    driver.execute_script("arguments[0].click();", email_field)
     email_field.send_keys(email)
 
-    _dismiss_cookie_banner()  # before password
-
-    password_field = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.NAME, "password")))
+    password_field = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.NAME, "password")))
     password_field.clear()
-    driver.execute_script("arguments[0].scrollIntoView({block:'center'});", password_field)
-    try:
-        password_field.click()
-    except Exception:
-        driver.execute_script("arguments[0].click();", password_field)
+    driver.execute_script("arguments[0].click();", password_field)
     password_field.send_keys(password)
 
     login_button = None
@@ -440,14 +429,24 @@ def _login_buffer(driver, email: str, password: str) -> None:
         "//button[contains(text(), 'Log in')]",
     ):
         try:
-            login_button = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+            login_button = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.XPATH, xpath))
+            )
             if login_button:
                 break
         except Exception:
             continue
     if not login_button:
         raise RuntimeError("Buffer login button not found")
-    login_button.click()
+    
+    # Nuke again in case banner re-injected itself, then JS click
+    driver.execute_script("""
+        document.querySelectorAll('[data-cky-tag], .cky-consent-container, .cky-optout-action-area').forEach(function(el) {
+            el.parentNode && el.parentNode.removeChild(el);
+        });
+    """)
+    driver.execute_script("arguments[0].click();", login_button)
+    
     _complete_buffer_login_after_submit(driver)
 
 
