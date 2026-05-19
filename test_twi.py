@@ -393,25 +393,33 @@ def _login_buffer(driver, email: str, password: str) -> None:
         )
     except Exception:
         pass
-    try:
-        accept = WebDriverWait(driver, 3).until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(text(), 'Accept All') or contains(text(), 'Accept')]")
-            )
-        )
-        accept.click()
-        time.sleep(0.3)
-    except Exception:
-        pass
+
+    def _dismiss_cookie_banner():
+        for sel in ("[data-cky-tag='accept-button']", ".cky-btn-accept", "button.cky-btn"):
+            try:
+                btn = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, sel)))
+                btn.click()
+                time.sleep(0.3)
+                return
+            except Exception:
+                pass
+
+    _dismiss_cookie_banner()
 
     email_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.NAME, "email")))
     email_field.clear()
     email_field.click()
     email_field.send_keys(email)
 
+    _dismiss_cookie_banner()  # dismiss again in case it appeared late
+
     password_field = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.NAME, "password")))
     password_field.clear()
-    password_field.click()
+    driver.execute_script("arguments[0].scrollIntoView({block:'center'});", password_field)
+    try:
+        password_field.click()
+    except Exception:
+        driver.execute_script("arguments[0].click();", password_field)
     password_field.send_keys(password)
 
     login_button = None
