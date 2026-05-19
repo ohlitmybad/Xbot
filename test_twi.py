@@ -403,15 +403,26 @@ def _login_buffer(driver, email: str, password: str) -> None:
                 return
             except Exception:
                 pass
+        # fallback: hide it via JS
+        try:
+            driver.execute_script("""
+                var bar = document.querySelector('.cky-consent-bar, [data-cky-tag="notice"]');
+                if (bar) bar.style.display = 'none';
+            """)
+        except Exception:
+            pass
 
-    _dismiss_cookie_banner()
+    _dismiss_cookie_banner()  # before email
 
     email_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.NAME, "email")))
     email_field.clear()
-    email_field.click()
+    try:
+        email_field.click()
+    except Exception:
+        driver.execute_script("arguments[0].click();", email_field)
     email_field.send_keys(email)
 
-    _dismiss_cookie_banner()  # dismiss again in case it appeared late
+    _dismiss_cookie_banner()  # before password
 
     password_field = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.NAME, "password")))
     password_field.clear()
