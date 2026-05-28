@@ -19,18 +19,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest selenium requests requests-oauthlib
+          pip install pytest selenium google-api-python-client google-auth-httplib2 google-auth-oauthlib
       - name: Run script
         env:
-          API_KEY: ${{ secrets.API_KEY }}
-          API_KEY_SECRET: ${{ secrets.API_KEY_SECRET }}
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
           DATAMB_EMAIL: ${{ secrets.DATAMB_EMAIL }}
           DATAMB_PASSWORD: ${{ secrets.DATAMB_PASSWORD }}
           BUFFER_EMAIL: ${{ secrets.BUFFER_EMAIL }}
           BUFFER_PASSWORD: ${{ secrets.BUFFER_PASSWORD }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
         run: |
           python test_twi.py
