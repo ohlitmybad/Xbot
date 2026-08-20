@@ -62,6 +62,7 @@ def _make_fresh_driver(*, headless: bool = True, window_size: Tuple[int, int] = 
         }
         chrome_options.add_experimental_option("prefs", prefs)
     driver = webdriver.Chrome(options=chrome_options)
+    driver.set_page_load_timeout(60)
     driver.set_window_size(*window_size)
     driver._tmp_profile = tmp_profile
     return driver
@@ -1117,6 +1118,65 @@ def _resolve_twitter_channel_id(api_key: str) -> str:
     raise RuntimeError("No Twitter channel found in Buffer account")
 
 
+def _upload_image_to_host(local_path: str) -> str:
+    """Upload a local image to ImgBB and return a stable public HTTPS URL.
+
+    Buffer fetches media at publish time, so the host must stay publicly
+    reachable. Litterbox/catbox returns 412 and drops scheduled posts.
+    Requires IMGBB_API_KEY env var (same host as Content Creator).
+    """
+    import requests as _requests
+
+    api_key = os.environ.get("IMGBB_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("Set IMGBB_API_KEY env var")
+
+    abs_path = os.path.abspath(local_path)
+    if not os.path.isfile(abs_path):
+        raise FileNotFoundError(f"Image not found: {abs_path}")
+
+    with open(abs_path, "rb") as f:
+        image_b64 = base64.b64encode(f.read()).decode("ascii")
+
+    resp = _requests.post(
+        "https://api.imgbb.com/1/upload",
+        data={"key": api_key, "image": image_b64},
+        timeout=120,
+    )
+    try:
+        payload = resp.json()
+    except ValueError:
+        resp.raise_for_status()
+        raise RuntimeError(
+            f"ImgBB upload failed: unexpected response ({resp.status_code})"
+        )
+
+    if resp.status_code >= 400 or not payload.get("success"):
+        err = (
+            payload.get("error")
+            or payload.get("status_txt")
+            or payload.get("data")
+            or resp.text
+        )
+        if isinstance(err, dict):
+            err = err.get("message") or err.get("error") or err
+        raise RuntimeError(f"ImgBB upload failed: {err}")
+
+    data = payload.get("data") or {}
+    url = (
+        (data.get("image") or {}).get("url")
+        or data.get("url")
+        or data.get("display_url")
+        or ""
+    )
+    url = url.strip()
+    if not url.startswith("http"):
+        raise RuntimeError(f"ImgBB upload failed: no public URL in response ({payload})")
+    if url.startswith("http://"):
+        url = "https://" + url[len("http://"):]
+    return url
+
+
 def schedule_twitter_post_via_buffer(
     driver,
     post_text: str,
@@ -1135,21 +1195,7 @@ def schedule_twitter_post_via_buffer(
     # Auto-discover Twitter channel ID
     channel_id = _resolve_twitter_channel_id(api_key)
 
-    # Upload image to public host
-    abs_path = os.path.abspath(image_path)
-    if not os.path.isfile(abs_path):
-        raise FileNotFoundError(f"Image not found: {abs_path}")
-    with open(abs_path, 'rb') as f:
-        resp = _requests.post(
-            "https://litterbox.catbox.moe/resources/internals/api.php",
-            data={"reqtype": "fileupload", "time": "72h"},
-            files={"fileToUpload": (os.path.basename(abs_path), f)},
-            timeout=120,
-        )
-    resp.raise_for_status()
-    image_url = resp.text.strip()
-    if not image_url.startswith("http"):
-        raise RuntimeError(f"Image upload failed: {image_url}")
+    image_url = _upload_image_to_host(image_path)
     print(f"Image uploaded: {image_url}")
 
     # Build assets
