@@ -1185,6 +1185,11 @@ def schedule_twitter_post_via_buffer(
     reply_text: Optional[str] = None,
 ) -> None:
     """Post to Twitter via Buffer GraphQL API (scheduled ~2 min from now)."""
+    if os.environ.get("XBOT_LOCAL", "").strip().lower() in ("1", "true", "yes"):
+        raise RuntimeError(
+            "XBOT_LOCAL is set — refusing Buffer upload. Use PLOT/run_local.py instead."
+        )
+
     import requests as _requests
     from datetime import timezone
 
@@ -1261,6 +1266,370 @@ def schedule_twitter_post_via_buffer(
         raise RuntimeError(f"Buffer API: unexpected response: {result}")
 
 
+PLAYER_PLOT_URL = "https://datamb.football/proplotgk24/"
+TEAM_PLOT_URL = "https://datamb.football/proteamplot/"
+
+POSITION_METRICS = {
+    "Goalkeeper": [
+        "Prevented goals per 90", "Save percentage %", "Pass completion %",
+        "Passes per 90", "Long passes per 90", "Short passes per 90", "Saves per 90",
+    ],
+    "Centre-back": [
+        "Passes completed per 90", "Long passes completed per 90", "Through passes completed per 90",
+        "Progressive passes (PAdj)", "Forward pass ratio", "Ball-carrying frequency",
+        "Possessions won - lost per 90", "Possession +/-", "Progressive actions per 90",
+        "Progressive action rate", "Sliding tackles (PAdj)", "Interceptions (PAdj)",
+        "Defensive duels won %", "Aerial duels won %", "Defensive duels won per 90",
+        "Possessions won per 90", "Defensive duels per 90", "Aerial duels won per 90",
+        "Aerial duels per 90", "Sliding tackles per 90", "Interceptions per 90",
+        "Progressive carries per 90", "Passes per 90", "Forward passes per 90",
+        "Long passes per 90", "Passes to final third per 90", "Progressive passes per 90",
+        "Pass completion %", "Forward pass completion %", "Progressive pass accuracy %",
+    ],
+    "Full-back": [
+        "xA per 100 passes", "Chance creation ratio", "Goals + Assists per 90", "xG+xA per 90",
+        "Pre-assists per 90", "Passes completed per 90", "Progressive passes (PAdj)",
+        "Forward pass ratio", "Dribbles per 100 touches", "Successful dribbles per 90",
+        "Ball-carrying frequency", "Duels won %", "Duels won per 90",
+        "Possessions won - lost per 90", "Possession +/-", "Progressive actions per 90",
+        "Progressive action rate", "Defensive duels won per 90", "Possessions won per 90",
+        "Defensive duels per 90", "Aerial duels per 90", "Sliding tackles per 90",
+        "Interceptions per 90", "xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90",
+        "Offensive duels per 90", "Progressive carries per 90", "Accelerations per 90",
+        "Passes per 90", "Forward passes per 90", "Long passes per 90", "xA per 90",
+        "Shot assists per 90", "Key passes per 90", "Passes to final third per 90",
+        "Passes to penalty box per 90", "Through passes per 90", "Deep completions per 90",
+        "Progressive passes per 90", "Defensive duels won %", "Aerial duels won %",
+        "Dribble success rate %", "Offensive duels won %", "Pass completion %",
+        "Forward pass completion %", "Progressive pass accuracy %",
+    ],
+    "Midfielder": [
+        "xG per 100 touches", "Goals per 100 touches", "npxG per 90", "xA per 100 passes",
+        "Chance creation ratio", "Goals + Assists per 90", "xG+xA per 90", "Assists - xA per 90",
+        "Pre-assists per 90", "Passes completed per 90", "Long passes completed per 90",
+        "Through passes completed per 90", "Progressive passes (PAdj)", "Forward pass ratio",
+        "Successful dribbles per 90", "Dribbles per 100 touches", "Ball-carrying frequency",
+        "Duels won %", "Duels won per 90", "Possessions won - lost per 90", "Possession +/-",
+        "Progressive actions per 90", "Progressive action rate", "Possessions won per 90",
+        "Defensive duels per 90", "Aerial duels per 90", "Sliding tackles per 90",
+        "Sliding tackles (PAdj)", "Interceptions per 90", "Interceptions (PAdj)",
+        "Successful attacking actions per 90", "xG per 90", "Goals per 90", "Assists per 90",
+        "Crosses per 90", "Progressive carries per 90", "Accelerations per 90",
+        "Fouls suffered per 90", "Passes per 90", "Forward passes per 90", "Long passes per 90",
+        "xA per 90", "Shot assists per 90", "Key passes per 90", "Passes to final third per 90",
+        "Passes to penalty box per 90", "Through passes per 90", "Deep completions per 90",
+        "Progressive passes per 90", "Defensive duels won %", "Pass completion %",
+        "Forward pass completion %", "Progressive pass accuracy %", "Dribble success rate %",
+    ],
+    "Winger": [
+        "xG/Shot", "Goals - xG per 90", "xG per 100 touches", "Shot frequency",
+        "Goals per 100 touches", "npxG per 90", "npxG/Shot", "xA per 100 passes",
+        "Chance creation ratio", "Goals + Assists per 90", "xG+xA per 90", "Assists - xA per 90",
+        "Successful dribbles per 90", "Dribbles per 100 touches", "Ball-carrying frequency",
+        "Duels won %", "Duels won per 90", "Progressive actions per 90", "Progressive action rate",
+        "Shots on target %", "Goal conversion %", "Cross accuracy %", "Dribble success rate %",
+        "Offensive duels won %", "Successful attacking actions per 90", "xG per 90",
+        "Goals per 90", "Assists per 90", "Shots per 90", "Crosses per 90",
+        "Offensive duels per 90", "Touches in box per 90", "Progressive carries per 90",
+        "Accelerations per 90", "Fouls suffered per 90", "xA per 90", "Shot assists per 90",
+        "Key passes per 90", "Passes to final third per 90", "Passes to penalty box per 90",
+        "Deep completions per 90", "Progressive passes per 90",
+    ],
+    "Striker": [
+        "xG/Shot", "Goals - xG per 90", "xG per 100 touches", "Shot frequency",
+        "Goals per 100 touches", "npxG per 90", "npxG/Shot", "Chance creation ratio",
+        "Goals + Assists per 90", "xG+xA per 90", "Dribbles per 100 touches",
+        "Successful dribbles per 90", "Duels won %", "Aerial duels per 90", "xG per 90",
+        "Shots per 90", "Touches in box per 90", "Goals per 90", "Assists per 90", "xA per 90",
+        "Aerial duels won %", "Shots on target %", "Goal conversion %", "Offensive duels won %",
+        "Pass completion %",
+    ],
+}
+
+TEAM_METRICS = [
+    "Goals per 90", "xG per 90", "Shots on target per 90", "Shots on target %",
+    "Passes completed", "Pass accuracy %", "Possession %", "Positional attacks per 90",
+    "Counter attacks per 90", "Touches in the box per 90", "Goals conceded per 90",
+    "SoT against per 90", "Defensive duels per 90", "Defensive duel %",
+    "Aerial duels per 90", "Aerial duels %", "Passes per possession", "PPDA",
+]
+
+POSITION_TWEET_LABEL = {
+    "Goalkeeper": "Goalkeepers",
+    "Centre-back": "Centre-backs",
+    "Full-back": "Full-backs",
+    "Midfielder": "Midfielders",
+    "Winger": "Wingers",
+    "Striker": "Strikers",
+    "Teams": "Teams",
+}
+
+SIMILAR_METRICS_GROUPS = [
+    ["xG/Shot", "npxG/Shot"],
+    ["Shots on target %", "Goal conversion %"],
+    ["xG per 90", "npxG per 90"],
+    ["xG per 90", "xG per 100 touches"],
+    ["xG+xA per 90", "xG per 90"],
+    ["xG+xA per 90", "xA per 90"],
+    ["npxG per 90", "xG per 100 touches"],
+    ["Pass completion %", "Forward pass completion %", "Progressive pass accuracy %"],
+    ["Offensive duels won %", "Successful dribbles %"],
+    ["xA per 90", "xA per 100 passes"],
+    ["Passes per 90", "Forward passes per 90"],
+    ["Passes per 90", "Passes completed per 90"],
+    ["Forward passes per 90", "Forward pass ratio"],
+    ["Long passes per 90", "Long passes completed per 90"],
+    ["Through passes per 90", "Through passes completed per 90"],
+    ["Progressive passes per 90", "Progressive passes (PAdj)"],
+    [
+        "Progressive carries per 90", "Accelerations per 90", "Successful dribbles per 90",
+        "Offensive duels per 90", "Sucessful attacking actions per 90",
+    ],
+    ["Passes to final third per 90", "Passes to penalty box per 90", "Progressive passes per 90"],
+    ["Progressive actions per 90", "Progressive passes per 90", "Progressive carries per 90"],
+    ["Possessions won - lost per 90", "Possessions won per 90"],
+    ["Possessions won - lost per 90", "Possession +/-"],
+    ["Duels won %", "Offensive duels won %"],
+    ["Duels won %", "Defensive duels won %"],
+    ["Duels won %", "Aerial duels won %"],
+    ["Ball-carrying frequency", "Progressive carries per 90"],
+    ["Progressive actions", "Progressive action rate"],
+    ["Progressive actions per 90", "Progressive action rate"],
+    ["Dribbles per 100 touches", "Successful dribbles per 90"],
+    ["Defensive duels per 90", "Defensive duels won per 90"],
+    ["Aerial duels per 90", "Aerial duels won per 90"],
+    ["Sliding tackles per 90", "Sliding tackles (PAdj)"],
+    ["Interceptions per 90", "Interceptions (PAdj)"],
+    ["SoT against per 90", "Shots on target %"],
+    ["Passes per possession", "Passes completed"],
+]
+
+
+def _filter_similar_metrics(selected_metric, available_metrics, similar_groups):
+    filtered_metrics = available_metrics.copy()
+    for group in similar_groups:
+        if selected_metric in group:
+            for metric in group:
+                if metric in filtered_metrics and metric != selected_metric:
+                    filtered_metrics.remove(metric)
+    return filtered_metrics
+
+
+def _select_plot_dropdown(
+    driver,
+    trigger_id,
+    options_id,
+    label,
+    extra_matches=None,
+    search_input_id=None,
+    timeout=10,
+):
+    """Pick one option in the Plot custom-select UI (multi-select + search).
+
+    Clicks the option label, not the combine checkbox. Matches data-value or
+    the option's span text. Raises if the trigger does not show the choice.
+    """
+    candidates = [label, *(extra_matches or [])]
+    script = """
+        const triggerId = arguments[0];
+        const optionsId = arguments[1];
+        const candidates = arguments[2];
+        const searchInputId = arguments[3];
+
+        function norm(s) {
+            return (s || '').replace(/\\s+/g, ' ').trim();
+        }
+        function optionLabel(option) {
+            const span = option.querySelector('span:not(.option-check)');
+            return span || option;
+        }
+        function optionText(option) {
+            return norm(optionLabel(option).textContent);
+        }
+        function matches(option) {
+            const value = option.getAttribute('data-value') || '';
+            const text = optionText(option);
+            return candidates.some(function (c) {
+                return c === value || c === text;
+            });
+        }
+
+        const trigger = document.getElementById(triggerId);
+        const options = document.getElementById(optionsId);
+        if (!trigger || !options) return { ok: false, reason: 'missing-ui' };
+
+        document.querySelectorAll('.custom-select-trigger.open').forEach(function (openTrigger) {
+            if (openTrigger !== trigger) {
+                openTrigger.classList.remove('open');
+                const sibling = openTrigger.nextElementSibling;
+                if (sibling && sibling.classList.contains('custom-select-options')) {
+                    sibling.style.display = 'none';
+                }
+            }
+        });
+        if (!trigger.classList.contains('open')) trigger.click();
+
+        if (searchInputId) {
+            const search = document.getElementById(searchInputId);
+            if (search) {
+                const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                setter.call(search, candidates[0]);
+                search.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+
+        let found = null;
+        const optionNodes = options.querySelectorAll(
+            '#' + optionsId.replace(/-options$/, '-list') + ' .custom-select-option, .custom-select-option'
+        );
+        optionNodes.forEach(function (option) {
+            if (found || option.hidden) return;
+            if (matches(option)) found = option;
+        });
+        if (!found) {
+            return {
+                ok: false,
+                reason: 'not-found',
+                open: trigger.classList.contains('open'),
+                count: options.querySelectorAll('.custom-select-option').length
+            };
+        }
+
+        optionLabel(found).click();
+        trigger.classList.remove('open');
+        options.style.display = 'none';
+
+        const triggerSpan = trigger.querySelector('span');
+        return {
+            ok: true,
+            shown: norm(triggerSpan ? triggerSpan.textContent : trigger.textContent)
+        };
+    """
+
+    deadline = time.time() + timeout
+    last = None
+    while time.time() < deadline:
+        last = driver.execute_script(script, trigger_id, options_id, candidates, search_input_id)
+        shown = (last or {}).get("shown") or ""
+        if last and last.get("ok") and any(c == shown or c in shown for c in candidates):
+            return shown
+        time.sleep(0.2)
+
+    raise RuntimeError(
+        f"Could not select {label!r} in #{options_id} "
+        f"(candidates={candidates}, last={last})"
+    )
+
+
+def _configure_player_plot(driver, position, league, age, metric_x, metric_y):
+    WebDriverWait(driver, 15).until(
+        lambda d: d.execute_script(
+            "return document.querySelectorAll('#position-select-options .custom-select-option').length > 0"
+            " && document.querySelectorAll('#league-select-options .custom-select-option').length > 0"
+            " && document.getElementById('x-metric-trigger') !== null"
+        )
+    )
+
+    _select_plot_dropdown(
+        driver,
+        "position-select-trigger",
+        "position-select-options",
+        position,
+    )
+    _select_plot_dropdown(
+        driver,
+        "league-select-trigger",
+        "league-select-options",
+        league,
+        extra_matches=["No Top 7"] if league == "Outside Top 7" else None,
+    )
+    if age != "Age":
+        age_value = age[1:] if age.startswith("U") else age
+        _select_plot_dropdown(
+            driver,
+            "age-select-trigger",
+            "age-select-options",
+            age,
+            extra_matches=[age_value],
+        )
+
+    # Position changes rebuild metric lists; wait before picking axes.
+    WebDriverWait(driver, 10).until(
+        lambda d: d.execute_script(
+            "return document.querySelectorAll('#x-metric-list .custom-select-option').length > 0"
+            " && document.querySelectorAll('#y-metric-list .custom-select-option').length > 0"
+        )
+    )
+    _select_plot_dropdown(
+        driver,
+        "x-metric-trigger",
+        "x-metric-options",
+        metric_x,
+        search_input_id="xMetricSearch",
+    )
+    _select_plot_dropdown(
+        driver,
+        "y-metric-trigger",
+        "y-metric-options",
+        metric_y,
+        search_input_id="yMetricSearch",
+    )
+
+
+def _configure_team_plot(driver, league, metric_x, metric_y):
+    """Configure proteamplot metrics + league after the multi-select rewrite.
+
+    Metrics still flow through hidden #select-x / #select-y (change -> updateChart).
+    League filtering uses selectedLeagues from the custom multi-select, so we must
+    click #league-select-options (Top 7 data-value is "all").
+    """
+    WebDriverWait(driver, 15).until(
+        lambda d: d.execute_script(
+            "return document.getElementById('select-x')"
+            " && document.getElementById('select-x').options.length > 0"
+            " && document.querySelectorAll('#league-select-options .custom-select-option').length > 0"
+            " && document.querySelectorAll('#x-metric-options .metric-select-option').length > 0"
+        )
+    )
+
+    metric_ok = driver.execute_script(
+        """
+        function setMetric(selectId, triggerId, label) {
+            var select = document.getElementById(selectId);
+            if (!select) return false;
+            for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].text === label || select.options[i].value === label) {
+                    select.selectedIndex = i;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    var trigger = document.getElementById(triggerId);
+                    if (trigger) {
+                        var span = trigger.querySelector('span');
+                        if (span) span.textContent = label;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+        return setMetric('select-x', 'x-metric-trigger', arguments[0])
+            && setMetric('select-y', 'y-metric-trigger', arguments[1]);
+        """,
+        metric_x,
+        metric_y,
+    )
+    if not metric_ok:
+        raise RuntimeError(f"Could not set team metrics {metric_x!r} / {metric_y!r}")
+
+    league_aliases = ["all"] if league == "Top 7 Leagues" else None
+    _select_plot_dropdown(
+        driver,
+        "league-select-trigger",
+        "league-select-options",
+        league,
+        extra_matches=league_aliases,
+    )
+
+
 class TestUntitled:
     def setup_method(self, method):
         self.screenshot_dir = os.path.dirname(os.path.abspath(__file__))
@@ -1272,8 +1641,7 @@ class TestUntitled:
 
     def teardown_method(self):
         _quit_driver(self.driver)
-    
-    # Helper function to wait for download to complete
+
     def wait_for_download(self, timeout=30):
         """Wait for download to finish"""
         seconds = 0
@@ -1287,165 +1655,17 @@ class TestUntitled:
                     dl_wait = True
             seconds += 1
         return seconds
-    
+
     def run_test_iteration(self):
-        # Adjust metrics
-        urls_and_metrics = {
-            "https://datamb.football/proplotgk24/": [ 
-                "Prevented goals per 90", "Save percentage %", "Pass completion %", 
-                 "Passes per 90", "Long passes per 90", "Short passes per 90", "Saves per 90"
-            ],
-            "https://datamb.football/proplotcb24/": [
-                "Passes completed per 90", "Long passes completed per 90", "Through passes completed per 90", 
-                "Progressive passes (PAdj)", "Forward pass ratio", "Ball-carrying frequency", 
-                "Possessions won - lost per 90", "Possession +/-", "Progressive actions per 90", 
-                "Progressive action rate", "Sliding tackles (PAdj)", "Interceptions (PAdj)", 
-                "Defensive duels won %", "Aerial duels won %", "Defensive duels won per 90",
-                "Possessions won per 90", "Defensive duels per 90", "Aerial duels won per 90",
-        "Aerial duels per 90", "Sliding tackles per 90", 
-        "Interceptions per 90",  
-        "Progressive carries per 90", "Passes per 90", "Forward passes per 90", 
-        "Long passes per 90", "Passes to final third per 90", 
-        "Progressive passes per 90", "Pass completion %", "Forward pass completion %", 
-        "Progressive pass accuracy %"
-            ],
-            "https://datamb.football/proplotfb24/": [
-                "xA per 100 passes", "Chance creation ratio", "Goals + Assists per 90", "xG+xA per 90", 
-                "Pre-assists per 90", "Passes completed per 90", "Progressive passes (PAdj)", 
-                "Forward pass ratio", "Dribbles per 100 touches", "Successful dribbles per 90", "Ball-carrying frequency", 
-                "Duels won %", "Duels won per 90", "Possessions won - lost per 90", "Possession +/-", 
-                "Progressive actions per 90", "Progressive action rate", "Defensive duels won per 90",                
-                "Possessions won per 90","Defensive duels per 90","Aerial duels per 90",
-                "Sliding tackles per 90","Interceptions per 90",
-                "xG per 90", "Goals per 90", "Assists per 90", "Crosses per 90",
-                "Offensive duels per 90","Progressive carries per 90","Accelerations per 90",
-                "Passes per 90","Forward passes per 90","Long passes per 90",
-                "xA per 90","Shot assists per 90","Key passes per 90",
-                "Passes to final third per 90","Passes to penalty box per 90","Through passes per 90",
-                "Deep completions per 90","Progressive passes per 90","Defensive duels won %",
-                "Aerial duels won %","Dribble success rate %","Offensive duels won %",
-                "Pass completion %","Forward pass completion %","Progressive pass accuracy %"
+        player_positions = list(POSITION_METRICS.keys())
+        # Same relative weights as before: GK/CB/FB/CM/FW/ST/Teams
+        plot_choices = player_positions + ["Teams"]
+        weights2 = [0.07, 0.14, 0.07, 0.22, 0.20, 0.13, 0.17]
+        selected_choice = random.choices(plot_choices, weights=weights2, k=1)[0]
+        is_team = selected_choice == "Teams"
+        selected_url = TEAM_PLOT_URL if is_team else PLAYER_PLOT_URL
+        selected_position = selected_choice
 
-            ],
-            "https://datamb.football/proplotcm24/": [
-                "xG per 100 touches", "Goals per 100 touches", "npxG per 90", "xA per 100 passes", 
-                "Chance creation ratio", "Goals + Assists per 90", "xG+xA per 90", "Assists - xA per 90", 
-                "Pre-assists per 90", "Passes completed per 90", "Long passes completed per 90", 
-                "Through passes completed per 90", "Progressive passes (PAdj)", "Forward pass ratio", 
-                "Successful dribbles per 90", "Dribbles per 100 touches", "Ball-carrying frequency", 
-                "Duels won %", "Duels won per 90", "Possessions won - lost per 90", "Possession +/-", 
-                "Progressive actions per 90", "Progressive action rate",
-                "Possessions won per 90","Defensive duels per 90","Aerial duels per 90",
-                "Sliding tackles per 90","Sliding tackles (PAdj)","Interceptions per 90",
-                "Interceptions (PAdj)","Successful attacking actions per 90","xG per 90",
-                "Goals per 90", "Assists per 90", "Crosses per 90","Progressive carries per 90",
-                "Accelerations per 90","Fouls suffered per 90","Passes per 90","Forward passes per 90",
-                "Long passes per 90","xA per 90","Shot assists per 90","Key passes per 90",
-                "Passes to final third per 90","Passes to penalty box per 90","Through passes per 90",
-                "Deep completions per 90","Progressive passes per 90","Defensive duels won %",
-                "Pass completion %","Forward pass completion %",
-                "Progressive pass accuracy %","Dribble success rate %"
-            ],
-            "https://datamb.football/proplotfw24/": [
-                "xG/Shot", "Goals - xG per 90", "xG per 100 touches", "Shot frequency", 
-                "Goals per 100 touches", "npxG per 90", "npxG/Shot", "xA per 100 passes", 
-                "Chance creation ratio", "Goals + Assists per 90", "xG+xA per 90", "Assists - xA per 90", 
-             "Successful dribbles per 90", "Dribbles per 100 touches", 
-                "Ball-carrying frequency", "Duels won %", "Duels won per 90", "Progressive actions per 90", 
-                "Progressive action rate",
-             "Shots on target %","Goal conversion %","Cross accuracy %","Dribble success rate %",
-             "Offensive duels won %","Successful attacking actions per 90","xG per 90",
-             "Goals per 90", "Assists per 90", "Shots per 90","Crosses per 90",
-             "Offensive duels per 90","Touches in box per 90","Progressive carries per 90",
-             "Accelerations per 90","Fouls suffered per 90","xA per 90",
-             "Shot assists per 90","Key passes per 90","Passes to final third per 90",
-             "Passes to penalty box per 90","Deep completions per 90","Progressive passes per 90"
-            ],
-            "https://datamb.football/proplotst24/": [
-                "xG/Shot", "Goals - xG per 90", "xG per 100 touches", "Shot frequency", 
-                "Goals per 100 touches", "npxG per 90", "npxG/Shot",  
-                "Chance creation ratio", "Goals + Assists per 90", "xG+xA per 90", "Dribbles per 100 touches", 
-                "Successful dribbles per 90",
-                "Duels won %",
-                 "Aerial duels per 90","xG per 90","Shots per 90","Touches in box per 90",
-                 "Goals per 90", "Assists per 90","xA per 90","Aerial duels won %",
-                 "Shots on target %","Goal conversion %","Offensive duels won %","Pass completion %" 
-            ],
-            "https://datamb.football/proteamplot/": [
-                "Goals per 90", "xG per 90", "Shots on target per 90", "Shots on target %", 
-                "Passes completed", "Pass accuracy %", "Possession %", "Positional attacks per 90", 
-                "Counter attacks per 90", "Touches in the box per 90", "Goals conceded per 90", 
-                "SoT against per 90", "Defensive duels per 90", "Defensive duel %", 
-                "Aerial duels per 90", "Aerial duels %", "Passes per possession", "PPDA"
-            ]            
-        }
-
-        # Define groups of similar metrics that shouldn't be plotted together
-        similar_metrics_groups = [
-            ["xG/Shot", "npxG/Shot"],
-            ["Shots on target %", "Goal conversion %"],
-            ["xG per 90", "npxG per 90"],
-            ["xG per 90", "xG per 100 touches"],
-            ["xG+xA per 90", "xG per 90"],
-            ["xG+xA per 90", "xA per 90"],
-            ["npxG per 90", "xG per 100 touches"],
-            ["Pass completion %","Forward pass completion %", "Progressive pass accuracy %"],
-            ["Offensive duels won %", "Successful dribbles %"],
-            ["xA per 90", "xA per 100 passes"],            
-            ["Passes per 90", "Forward passes per 90"],
-            ["Passes per 90", "Passes completed per 90"],
-            ["Forward passes per 90", "Forward pass ratio"],
-            ["Long passes per 90", "Long passes completed per 90"],
-            ["Through passes per 90", "Through passes completed per 90"],
-            ["Progressive passes per 90", "Progressive passes (PAdj)"],
-            ["Progressive carries per 90", "Accelerations per 90", "Successful dribbles per 90", "Offensive duels per 90", "Sucessful attacking actions per 90"],
-            ["Passes to final third per 90", "Passes to penalty box per 90", "Progressive passes per 90"],
-            ["Progressive actions per 90", "Progressive passes per 90", "Progressive carries per 90"],
-            ["Possessions won - lost per 90", "Possessions won per 90"],
-            ["Possessions won - lost per 90", "Possession +/-"],
-            ["Duels won %", "Offensive duels won %"],
-            ["Duels won %", "Defensive duels won %"],
-            ["Duels won %", "Aerial duels won %"],
-            ["Ball-carrying frequency", "Progressive carries per 90"],
-            ["Progressive actions", "Progressive action rate"],
-            ["Progressive actions per 90", "Progressive action rate"],
-            ["Dribbles per 100 touches", "Successful dribbles per 90"],
-            ["Defensive duels per 90", "Defensive duels won per 90"],
-            ["Aerial duels per 90", "Aerial duels won per 90"],
-            ["Sliding tackles per 90", "Sliding tackles (PAdj)"],
-            ["Interceptions per 90", "Interceptions (PAdj)"],
-            ["SoT against per 90", "Shots on target %"],
-            ["Passes per possession", "Passes completed"]
-        ]
-        
-        # Function to filter out similar metrics
-        def filter_similar_metrics(selected_metric, available_metrics, similar_groups):
-            filtered_metrics = available_metrics.copy()
-            
-            # Find which group the selected metric belongs to
-            for group in similar_groups:
-                if selected_metric in group:
-                    # Remove all metrics from the same group
-                    for metric in group:
-                        if metric in filtered_metrics and metric != selected_metric:
-                            filtered_metrics.remove(metric)
-            
-            return filtered_metrics
-
-        url_to_position = {
-            "https://datamb.football/proplotgk24/": "Goalkeepers",
-            "https://datamb.football/proplotcb24/": "Centre-backs",
-            "https://datamb.football/proplotfb24/": "Full-backs",
-            "https://datamb.football/proplotcm24/": "Midfielders",
-            "https://datamb.football/proplotfw24/": "Wingers",
-            "https://datamb.football/proplotst24/": "Strikers",
-            "https://datamb.football/proteamplot/": "Teams" 
-        }
-
-        urls = list(urls_and_metrics.keys())
-        weights2 = [0.07, 0.14, 0.07, 0.22, 0.20, 0.13, 0.17]  # Adjust weights for position
-        
-        selected_url = random.choices(urls, weights=weights2, k=1)[0]                
         self.driver.get(selected_url)
         time.sleep(1)
 
@@ -1459,47 +1679,41 @@ class TestUntitled:
         self.driver.find_element(By.NAME, "pwd").send_keys(DATAMB_PASSWORD)
         self.driver.find_element(By.CSS_SELECTOR, ".SFfrm button").click()
         self.driver.set_window_size(950, 650)
-        
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, "select-all-button"))).click()
-        
-        # Get available metrics for the selected URL
-        metric_options = urls_and_metrics[selected_url]
-        
-        # Select X metric randomly
+
+        WebDriverWait(self.driver, 20).until(
+            EC.element_to_be_clickable((By.ID, "select-all-button"))
+        )
+
+        metric_options = TEAM_METRICS if is_team else POSITION_METRICS[selected_position]
         selected_metric_x = random.choice(metric_options)
-        
-        # Filter Y metric options to exclude similar metrics to X
-        filtered_y_options = filter_similar_metrics(selected_metric_x, metric_options.copy(), similar_metrics_groups)
-        
-        # Remove the X metric from Y options
+        filtered_y_options = _filter_similar_metrics(
+            selected_metric_x, metric_options.copy(), SIMILAR_METRICS_GROUPS
+        )
         if selected_metric_x in filtered_y_options:
             filtered_y_options.remove(selected_metric_x)
-        
-        # If we have filtered out all options, revert to using all metrics except the X metric
         if not filtered_y_options:
             filtered_y_options = [m for m in metric_options if m != selected_metric_x]
-        
-        # Select Y metric randomly from filtered options
         selected_metric_y = random.choice(filtered_y_options)
 
-        if selected_url == "https://datamb.football/proteamplot/":
-            league_options = ["Top 7 Leagues", "Top 5 Leagues", "Premier League", 
-                             "La Liga", "Bundesliga", "Serie A", "Ligue 1", 
-                             "Liga Portugal", "Eredivisie"]
-            weights = [0.22, 0.42, 0.22, 0.06, 0.04, 0.04, 0, 0, 0] # Adjust weights for league
+        if is_team:
+            league_options = [
+                "Top 7 Leagues", "Top 5 Leagues", "Premier League",
+                "La Liga", "Bundesliga", "Serie A", "Ligue 1",
+                "Liga Portugal", "Eredivisie",
+            ]
+            weights = [0.22, 0.42, 0.22, 0.06, 0.04, 0.04, 0, 0, 0]
         else:
-            league_options = ["Top 7 Leagues", "Top 5 Leagues", "Premier League", 
-                             "La Liga", "All Leagues"]
-            weights = [0.25, 0.43, 0.05, 0.02, 0.25] # Adjust weights for league
+            league_options = [
+                "Top 7 Leagues", "Top 5 Leagues", "Premier League",
+                "La Liga", "All Leagues",
+            ]
+            weights = [0.25, 0.43, 0.05, 0.02, 0.25]
 
         assert len(weights) == len(league_options), "Weights length must match the league options length"
         selected_league = random.choices(league_options, weights=weights, k=1)[0]
-        selected_position = url_to_position.get(selected_url, None)
-        
-        selected_age = "Age"  # Default
-        age_options = ["Age"]  # Default age options
-        
-        if selected_url != "https://datamb.football/proteamplot/":
+
+        selected_age = "Age"
+        if not is_team:
             if selected_league == "All Leagues":
                 if selected_position != "Goalkeeper":
                     age_options = ["U18", "U19", "U20", "U21", "U23", "U24"]
@@ -1512,127 +1726,80 @@ class TestUntitled:
                     age_options = ["Age", "U24"]
             else:
                 age_options = ["Age"]
-            
-        
-        selected_age = random.choice(age_options)
+            selected_age = random.choice(age_options)
 
-        self.driver.execute_script(f"""
-            var selectX = document.getElementById('select-x');
-            
-            // Find the option with matching text and select it
-            for (var i = 0; i < selectX.options.length; i++) {{
-                if (selectX.options[i].text === '{selected_metric_x}') {{
-                    selectX.selectedIndex = i;
-                var event = new Event('change', {{ bubbles: true }});
-                    selectX.dispatchEvent(event);
-                var xTrigger = document.getElementById('x-metric-trigger');
-                    if (xTrigger) {{
-                        var span = xTrigger.querySelector('span');
-                        if (span) span.textContent = '{selected_metric_x}';
-                    }}
-                    break;
-                }}
-            }}
-        """)
-        
-        self.driver.execute_script(f"""
-            var selectY = document.getElementById('select-y');
-            for (var i = 0; i < selectY.options.length; i++) {{
-                if (selectY.options[i].text === '{selected_metric_y}') {{
-                    selectY.selectedIndex = i;
-             var event = new Event('change', {{ bubbles: true }});
-                    selectY.dispatchEvent(event);
-             var yTrigger = document.getElementById('y-metric-trigger');
-                    if (yTrigger) {{
-                        var span = yTrigger.querySelector('span');
-                        if (span) span.textContent = '{selected_metric_y}';
-                    }}
-                    break;
-                }}
-            }}
-        """)
-        
-        self.driver.execute_script(f"""
-            var selectLeague = document.getElementById('select-league');
-            var leagueValue = '';
-                
-                if ('{selected_league}'.includes('Top 5')) leagueValue = 'Top 5 Leagues';
-                else if ('{selected_league}'.includes('Top 7')) leagueValue = 'Top 7 Leagues';
-                else if ('{selected_league}'.includes('Premier')) leagueValue = 'Premier League';
-                else if ('{selected_league}'.includes('La Liga')) leagueValue = 'La Liga';
-                else if ('{selected_league}'.includes('Bundesliga')) leagueValue = 'Bundesliga';
-                else if ('{selected_league}'.includes('Serie A')) leagueValue = 'Serie A';
-                else if ('{selected_league}'.includes('Ligue 1')) leagueValue = 'Ligue 1';
-                
-                if (leagueValue) {{
-                    for (var i = 0; i < selectLeague.options.length; i++) {{
-                        if (selectLeague.options[i].value === leagueValue) {{
-                            selectLeague.selectedIndex = i;
-                            var event = new Event('change', {{ bubbles: true }});
-                            selectLeague.dispatchEvent(event);
-                            break;
-                        }}
-                    }}
-                }}
-        """)
-        
-        if selected_url != "https://datamb.football/proteamplot/" and selected_age != "Age":
-            self.driver.execute_script(f"""
-                var ageTrigger = document.getElementById('age-select-trigger');
-                if (ageTrigger) {{
-                    ageTrigger.click();
-                }}
-                                setTimeout(function() {{
-                    var options = document.querySelectorAll('#age-select-options .custom-select-option');
-                    for (var i = 0; i < options.length; i++) {{
-                        if (options[i].textContent.trim() === '{selected_age}') {{
-                            options[i].click();
-                            break;
-                        }}
-                    }}
-                }}, 100);
-            """)
-            
-             
+        if is_team:
+            _configure_team_plot(
+                self.driver, selected_league, selected_metric_x, selected_metric_y
+            )
+        else:
+            _configure_player_plot(
+                self.driver,
+                selected_position,
+                selected_league,
+                selected_age,
+                selected_metric_x,
+                selected_metric_y,
+            )
+
         WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.ID, "toggle-median-lines"))
-            ).click()
-       
+            EC.element_to_be_clickable((By.ID, "select-all-button"))
+        ).click()
+
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "toggle-median-lines"))
+        ).click()
+
         WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".toggle-icon"))
         ).click()
-            
-        time.sleep(2)
-        
-     
-        dots = self.driver.find_elements(By.CSS_SELECTOR, ".team-label, .dot")
-            
-        if len(dots) < 35:
-            return False  # Signal that we need to retry
-        if len(dots) > 800:
-            return False  # Signal that we need to retry
-        
-        
-        screenshot_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[@onclick='takeScreenshot()']"))
-        )
-        screenshot_button.click()
-        
-        # Wait for the download to complete
-        self.wait_for_download(timeout=30)
-        
-    
+
         time.sleep(2)
 
-        
-        selected_position = url_to_position[selected_url]
-        selected_age = selected_age.replace("Age", "")
-
-        # Create the tweet text dynamically
-        if selected_url == "https://datamb.football/proteamplot/":
-            tweet_text = f"{selected_league} : {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot teams 👉 datamb.football"
+        if is_team:
+            dots = self.driver.find_elements(
+                By.CSS_SELECTOR, "#scatter-plot circle, .team-label"
+            )
         else:
-            tweet_text = f"{selected_league} : {selected_age} {selected_position}\n📈 {selected_metric_x} vs {selected_metric_y}\n\nPlot more 👉 datamb.football"
+            dots = self.driver.find_elements(
+                By.CSS_SELECTOR, ".dot-layer circle, .team-label"
+            )
+
+        if len(dots) < 35:
+            return False
+        if len(dots) > 800:
+            return False
+
+        if is_team:
+            screenshot_button = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[@onclick='takeScreenshot()']")
+                )
+            )
+        else:
+            screenshot_button = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.ID, "screenshot-button"))
+            )
+        screenshot_button.click()
+
+        self.wait_for_download(timeout=30)
+        time.sleep(2)
+
+        tweet_position = POSITION_TWEET_LABEL[selected_position]
+        age_for_tweet = selected_age.replace("Age", "")
+
+        if is_team:
+            tweet_text = (
+                f"{selected_league} : {tweet_position}\n"
+                f"📈 {selected_metric_x} vs {selected_metric_y}\n\n"
+                f"Plot teams 👉 datamb.football"
+            )
+        else:
+            tweet_text = (
+                f"{selected_league} : {age_for_tweet} {tweet_position}\n"
+                f"📈 {selected_metric_x} vs {selected_metric_y}\n\n"
+                f"Free trial 👉 datamb.football"
+            )
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("All Leagues", "🌍 All Leagues")
         tweet_text = tweet_text.replace("Top 7 Leagues", "🇪🇺 Top 7 Leagues")
@@ -1646,19 +1813,16 @@ class TestUntitled:
         tweet_text = tweet_text.replace("PPDA", "Pressing")
         tweet_text = tweet_text.replace("completion %", "%")
         tweet_text = tweet_text.replace("accuracy %", "%")
-        
-
-
 
         alt_text = (
             "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2025/26 dataset.\n\nCompare and plot more team metrics for free on datamb.football"
-            if selected_url == "https://datamb.football/proteamplot/"
-            else "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2025/26 dataset.\n\nPositions are determined via the player's average heat map.\n\nSubscribe for more leagues and tools!"
+            if is_team
+            else "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2025/26 dataset.\n\nPositions are determined via the player's average heat map.\n\nJoin the free trial for more leagues and tools!"
         )
-        if selected_url == "https://datamb.football/proteamplot/":
+        if is_team:
             follow_up_text = "Compare and plot more team metrics ⤵️ datamb.football/teams"
         else:
-            follow_up_text = "Compare Top 7 League players, or subscribe to plot more leagues and metrics ⤵️ datamb.football"
+            follow_up_text = "Compare Top 7 League players, or join the free trial to plot more leagues and metrics ⤵️ datamb.football"
 
         screenshot_path = os.path.join(self.screenshot_dir, "DataMB Screenshot.png")
         self._buffer_post_text = tweet_text
