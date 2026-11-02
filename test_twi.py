@@ -1815,9 +1815,9 @@ class TestUntitled:
         tweet_text = tweet_text.replace("accuracy %", "%")
 
         alt_text = (
-            "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2025/26 dataset.\n\nCompare and plot more team metrics for free on datamb.football"
+            "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2026/27 dataset.\n\nCompare and plot more team metrics for free on datamb.football"
             if is_team
-            else "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2025/26 dataset.\n\nPositions are determined via the player's average heat map.\n\nJoin the free trial for more leagues and tools!"
+            else "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2026/27 dataset.\n\nPositions are determined via the player's average heat map.\n\nJoin the free trial for more leagues and tools!"
         )
         if is_team:
             follow_up_text = "Compare and plot more team metrics ⤵️ datamb.football/teams"
