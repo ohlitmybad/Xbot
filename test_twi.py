@@ -1798,7 +1798,7 @@ class TestUntitled:
             tweet_text = (
                 f"{selected_league} : {age_for_tweet} {tweet_position}\n"
                 f"📈 {selected_metric_x} vs {selected_metric_y}\n\n"
-                f"Free trial 👉 datamb.football"
+                f"Plot more 👉 datamb.football"
             )
         tweet_text = tweet_text.replace("  ", " ")
         tweet_text = tweet_text.replace("All Leagues", "🌍 All Leagues")
@@ -1817,12 +1817,12 @@ class TestUntitled:
         alt_text = (
             "This is an automated tweet 🤖\n\nLeague and metrics were chosen randomly in the 2026/27 dataset.\n\nCompare and plot more team metrics for free on datamb.football"
             if is_team
-            else "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2026/27 dataset.\n\nPositions are determined via the player's average heat map.\n\nJoin the free trial for more leagues and tools!"
+            else "This is an automated tweet 🤖\n\nPosition, league, age and metrics were chosen randomly in the 2026/27 dataset.\n\nPositions are determined via the player's average heat map.\n\nSubscribe for more leagues and tools!"
         )
         if is_team:
             follow_up_text = "Compare and plot more team metrics ⤵️ datamb.football/teams"
         else:
-            follow_up_text = "Compare Top 7 League players, or join the free trial to plot more leagues and metrics ⤵️ datamb.football"
+            follow_up_text = "Compare Top 7 League players, or subscribe to plot more leagues and metrics ⤵️ datamb.football"
 
         screenshot_path = os.path.join(self.screenshot_dir, "DataMB Screenshot.png")
         self._buffer_post_text = tweet_text
